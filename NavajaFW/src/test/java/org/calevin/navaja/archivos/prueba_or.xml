@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mapeo-raiz>
+<raiz-mapeo>
         <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
             <primary-key>
                 <campo nombre="id" />
@@ -9,4 +9,4 @@
             <campo nombre="des" nombre-como-atributo="des" tipo="VARCHAR"/>
         </tabla>
 
-</mapeo-raiz>
+</raiz-mapeo>
