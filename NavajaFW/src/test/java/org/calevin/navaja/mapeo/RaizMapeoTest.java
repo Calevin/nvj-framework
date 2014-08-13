@@ -12,10 +12,11 @@ import org.calevin.navaja.mapeo.TablaMapeo;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class RaizMapeoTest {
 
 	RaizMapeo raizMapeo;
-	String NOMBRETABLA = "tablaMaperoUna";
+	String NOMBRETABLA = "TablaMapeoUna";
 	String NOMBRETABLACOMOCLASE = "paquete.TablaMapeoUna";
 	TablaMapeo tablaMapeoUna = null;
 	
