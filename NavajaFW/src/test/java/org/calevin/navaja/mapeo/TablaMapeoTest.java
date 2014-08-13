@@ -9,6 +9,7 @@ import org.calevin.navaja.mapeo.TablaMapeo;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class TablaMapeoTest {
 
 	final String UNO = "uno";
