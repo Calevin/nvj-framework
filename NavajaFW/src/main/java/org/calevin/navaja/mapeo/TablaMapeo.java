@@ -1,6 +1,7 @@
 package org.calevin.navaja.mapeo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -17,7 +18,7 @@ public class TablaMapeo {
 
 
     /**
-	* Retorna el CampoMepeo de la tabla correspondiente a ese nombre segun lo
+	* Retorna el CampoMapeo de la tabla correspondiente a ese nombre segun lo
     * mapeado en los archivos de configuracion
 	* @param nombreCampo del campo a retornar
 	* @return el Campo correspondiete a ese nombre
@@ -75,5 +76,57 @@ public class TablaMapeo {
 	public void setNombreComoClase(String nombreComoClase) {
 		this.nombreComoClase = nombreComoClase;
 	}
-    
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((campos == null) ? 0 : campos.hashCode());
+		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+		result = prime * result
+				+ ((nombreComoClase == null) ? 0 : nombreComoClase.hashCode());
+		result = prime * result
+				+ ((primaryKeyMapeo == null) ? 0 : primaryKeyMapeo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TablaMapeo other = (TablaMapeo) obj;
+		if (campos == null) {
+			if (other.campos != null)
+				return false;
+		}
+		
+		if (campos != null & other.campos != null){
+			Collections.sort(campos, new CampoMapeo());
+			Collections.sort(other.campos, new CampoMapeo());			
+		}
+		
+		if (!campos.equals(other.campos))
+			return false;
+		if (nombre == null) {
+			if (other.nombre != null)
+				return false;
+		} else if (!nombre.equals(other.nombre))
+			return false;
+		if (nombreComoClase == null) {
+			if (other.nombreComoClase != null)
+				return false;
+		} else if (!nombreComoClase.equals(other.nombreComoClase))
+			return false;
+		if (primaryKeyMapeo == null) {
+			if (other.primaryKeyMapeo != null)
+				return false;
+		} else if (!primaryKeyMapeo.equals(other.primaryKeyMapeo))
+			return false;
+		return true;
+	}
+
 }
