@@ -144,8 +144,7 @@ public class Mapeador {
 			if (elementName.equals(NavajaConstantes.TABLA)) {
 
 				// Tomo el valor del atributo "nombre"
-				String nombreTabla = attributes
-						.getValue(NavajaConstantes.NOMBRE);
+				String nombreTabla = attributes.getValue(NavajaConstantes.NOMBRE);
 
 				// Si la tabla no esta repetida
 				if (!isTablaRepetida(nombreTabla)) {
@@ -156,7 +155,7 @@ public class Mapeador {
 					tabla.setNombre(nombreTabla);
 
 					String nombreClase = attributes
-							.getValue(NavajaConstantes.TABLA);
+							.getValue(NavajaConstantes.CLASE);
 					// SI la clase no esta repetida
 					if (!isClaseRepetida(nombreClase)) {
 						// Le seteo su atributo
@@ -207,8 +206,8 @@ public class Mapeador {
                         campo.setNombreComoAtributo(attributes.getValue(NOMBRECOMOATRIBUTO));
                         //TODO revisar tipo
                         //campo.setTipo(_setearTipo(attributes.getValue("tipo")));
-
                     }
+                    
                 } else {
                     throw new MapeoCampoRepetidoException(nombreCampo);
                 }
