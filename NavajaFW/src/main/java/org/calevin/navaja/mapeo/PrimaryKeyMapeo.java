@@ -1,6 +1,7 @@
 package org.calevin.navaja.mapeo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Clase que representa una PK del mapeo
@@ -39,7 +40,14 @@ public class PrimaryKeyMapeo {
 		if (campos == null) {
 			if (other.campos != null)
 				return false;
-		} else if (!campos.equals(other.campos))
+		} 
+		
+		if (campos != null & other.campos != null){
+			Collections.sort(campos, new CampoMapeo());
+			Collections.sort(other.campos, new CampoMapeo());			
+		}
+		
+		if (!campos.equals(other.campos))
 			return false;
 		return true;
 	}
