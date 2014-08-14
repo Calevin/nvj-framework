@@ -42,32 +42,28 @@ public class Mapeador {
 		return mapeoRaiz;
 	}
 
+	public static void limpiarMapeo() {
+		mapeoRaiz = null;
+	}
+	
 	/**
 	 * Mapea el xml guardando el mapeo en la instancia
 	 * 
 	 * @param xmlName
 	 *            nombre URI del xml a mapear
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
+	 * @throws IOException 
 	 */
-	public static void mapearXml(String xmlName) {
+	public static void mapearXml(String xmlName) throws ParserConfigurationException, SAXException, IOException {
 
 		// Creo un parser
-		try {
+		// TODO Wrappear las excepciones de SAX 
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
 			// Parseo el archivo; el segundo parametro es una clase interna
 			// que necesita SAX
 			parser.parse(xmlName, new LectorSax());
-
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
