@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<raiz-mapeo>
+        <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
+            <primary-key>
+                <campo nombre="id" />
+            </primary-key>
+
+            <campo nombre="id" nombre-como-atributo="id" tipo="INTEGER"/>
+            <campo nombre="des" nombre-como-atributo="des" tipo="VARCHAR"/>
+        </tabla>
+
+        <tabla nombre="prueba_segunda_tabla" clase="org.empresa.beans.PruebaSegundaTabla">
+            <primary-key>
+                <campo nombre="id_segunda" />
+            </primary-key>
+
+            <campo nombre="id_segunda" nombre-como-atributo="id_segunda" tipo="INTEGER"/>
+            <campo nombre="des_segunda" nombre-como-atributo="des_segunda" tipo="VARCHAR"/>
+        </tabla>
+</raiz-mapeo>

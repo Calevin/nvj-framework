@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<raiz-mapeo>
+        <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
+            <primary-key>
+                <campo nombre="id" />
+				<campo nombre="des" />                
+            </primary-key>
+
+            <campo nombre="id" nombre-como-atributo="id" tipo="INTEGER"/>
+            <campo nombre="des" nombre-como-atributo="des" tipo="VARCHAR"/>
+        </tabla>
+
+</raiz-mapeo>
