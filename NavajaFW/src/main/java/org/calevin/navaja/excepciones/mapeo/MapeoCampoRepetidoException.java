@@ -3,7 +3,7 @@ package org.calevin.navaja.excepciones.mapeo;
 import org.calevin.navaja.util.NavajaConstantes;
 import org.calevin.navaja.util.NavajaStringUtil;
 
-public class MapeoCampoRepetidoException extends MapeoExcepcion {
+public class MapeoCampoRepetidoException extends MapeoException {
 
 	private static final long serialVersionUID = 4011846282251208538L;
 
