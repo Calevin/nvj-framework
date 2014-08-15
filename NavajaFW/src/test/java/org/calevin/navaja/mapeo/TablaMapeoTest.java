@@ -33,43 +33,33 @@ public class TablaMapeoTest {
 
 	@Test
 	public void getCampoMapeoPorNombreCasoCorrectoTest() {
-
 		CampoMapeo campoMapeoTest;
 		campoMapeoTest = tablaMapeo.getCampoMapeoPorNombre(UNO);
 
 		Assert.assertTrue("El CampoMapeo retornado fue distinto", (campoMapeoTest.equals(campoPrimero)));
-
 	}
 
 	@Test
 	public void getCampoMapeoPorNombreCasoRespuestaNulaTest() {
-
 		CampoMapeo campoMapeoTest;
 		campoMapeoTest = tablaMapeo.getCampoMapeoPorNombre("ninguno");
 
-		Assert.assertTrue("El CampoMapeo retornado fue distinto", (campoMapeoTest == null));
-
+		Assert.assertTrue("El CampoMapeo retornado no fue null", (campoMapeoTest == null));
 	}
 
 	@Test
 	public void getCampoMapeoPorAtributoCasoCorrectoTest(){
-
 		CampoMapeo campoMapeoTest;
 		campoMapeoTest = tablaMapeo.getCampoMapeoPorAtributo(UNOCOMOATT);
 		
 		Assert.assertTrue("El CampoMapeo retornado fue distinto", (campoMapeoTest.equals(campoPrimero)));
-		
-		
 	}
 
 	@Test
 	public void getCampoMapeoPorAtributoCasoRespuestaNulaTest(){
-
 		CampoMapeo campoMapeoTest;
 		campoMapeoTest = tablaMapeo.getCampoMapeoPorAtributo("ninguno");
 		
-		Assert.assertTrue("El CampoMapeo retornado fue distinto", (campoMapeoTest == null));
-		
-		
+		Assert.assertTrue("El CampoMapeo retornado no fue null", (campoMapeoTest == null));
 	}
 }
