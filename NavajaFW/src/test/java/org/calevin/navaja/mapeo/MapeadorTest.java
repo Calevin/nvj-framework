@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import junit.framework.Assert;
 
 import org.calevin.navaja.excepciones.mapeo.MapeoCampoRepetidoException;
+import org.calevin.navaja.excepciones.mapeo.MapeoClaseRepetidaException;
+import org.calevin.navaja.excepciones.mapeo.MapeoException;
 import org.calevin.navaja.excepciones.mapeo.MapeoTablaRepetidaException;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,11 +14,13 @@ import org.junit.Test;
 @SuppressWarnings("deprecation")
 public class MapeadorTest {
 
-	private String archivoPruebaUnaTablaOr = "src/test/java/org/calevin/navaja/archivos/prueba_una_tabla_or.xml";
-	private String archivoPruebaVariasTablasOr = "src/test/java/org/calevin/navaja/archivos/prueba_varias_tablas_or.xml";
-	private String archivoPruebaPkVariasColsOr = "src/test/java/org/calevin/navaja/archivos/prueba_pk_varias_cols_or.xml";	
+	private String archivoPruebaUnaTabla = "src/test/java/org/calevin/navaja/archivos/prueba_una_tabla_or.xml";
+	private String archivoPruebaVariasTablas = "src/test/java/org/calevin/navaja/archivos/prueba_varias_tablas_or.xml";
+	private String archivoPruebaPkVariasCols = "src/test/java/org/calevin/navaja/archivos/prueba_pk_varias_cols_or.xml";	
 	private String archivoPruebaTablaRepetida = "src/test/java/org/calevin/navaja/archivos/prueba_tabla_repetida_or.xml";
 	private String archivoPruebaColumnaRepetida = "src/test/java/org/calevin/navaja/archivos/prueba_columna_repetida_or.xml";
+	private String archivoPruebaClaseRepetida = "src/test/java/org/calevin/navaja/archivos/prueba_clase_repetida_or.xml";
+	private String archivoPruebaMapeoVacio = "src/test/java/org/calevin/navaja/archivos/prueba_mapeo_vacio_or.xml";
 	
     private ArrayList<TablaMapeo> tablas = null;
     private ArrayList<String> nombresClase = null;	
@@ -58,7 +62,7 @@ public class MapeadorTest {
 	public void mapeoCorrectoUnaTabla() throws Exception {
 		Mapeador.limpiarMapeo();
 
-		Mapeador.mapearXml(archivoPruebaUnaTablaOr);
+		Mapeador.mapearXml(archivoPruebaUnaTabla);
 		
 		//Probando nombreClases
 		nombresClase = Mapeador.getMapeoRaiz().getNombresClase();
@@ -78,7 +82,7 @@ public class MapeadorTest {
 	public void mapeoCorrectoVariasTabla() throws Exception{
 		Mapeador.limpiarMapeo();
 
-		Mapeador.mapearXml(archivoPruebaVariasTablasOr);
+		Mapeador.mapearXml(archivoPruebaVariasTablas);
 
 		//Probando nombreClases
 		nombresClase = Mapeador.getMapeoRaiz().getNombresClase();
@@ -104,7 +108,7 @@ public class MapeadorTest {
 	public void mapeoCorrectoPkVariasColumnas() throws Exception {
 		Mapeador.limpiarMapeo();
 
-		Mapeador.mapearXml(archivoPruebaPkVariasColsOr);
+		Mapeador.mapearXml(archivoPruebaPkVariasCols);
 
 		//Probando nombreClases
 		nombresClase = Mapeador.getMapeoRaiz().getNombresClase();
@@ -135,5 +139,17 @@ public class MapeadorTest {
 	public void mapeoErroneoColumnaRepetida() throws Exception {
 		Mapeador.limpiarMapeo();
 		Mapeador.mapearXml(archivoPruebaColumnaRepetida);	
+	}
+	
+	@Test(expected = MapeoClaseRepetidaException.class)
+	public void mapeoErroneoClaseRepetida() throws Exception {
+		Mapeador.limpiarMapeo();
+		Mapeador.mapearXml(archivoPruebaClaseRepetida);	
+	}
+	
+	@Test(expected = MapeoException.class)
+	public void mapeoArchivoVacio() throws Exception {
+		Mapeador.limpiarMapeo();
+		Mapeador.mapearXml(archivoPruebaMapeoVacio);
 	}
 }
