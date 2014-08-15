@@ -1,14 +1,15 @@
 package org.calevin.navaja.mapeo;
 
 import java.io.IOException;
-
 import java.util.Iterator;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.calevin.navaja.excepciones.mapeo.MapeoCampoRepetidoException;
-import org.calevin.navaja.excepciones.mapeo.MapeoClaseRepetidaExcepcion;
+import org.calevin.navaja.excepciones.mapeo.MapeoClaseRepetidaException;
+import org.calevin.navaja.excepciones.mapeo.MapeoException;
 import org.calevin.navaja.excepciones.mapeo.MapeoTablaRepetidaException;
 import org.calevin.navaja.util.NavajaConstantes;
 import org.xml.sax.Attributes;
@@ -24,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class Mapeador {
 
 	private static RaizMapeo mapeoRaiz = null;
-
+	private static String msjErrorMapeoNoRealizado ="Mapeo no realizado, el archivo no es un mapeo correcto";
 	//TODO verificar tipo
 	/*
     static final Map<String, Integer> TIPOS_DE_DATO = new HashMap<String, Integer>() {
@@ -55,16 +56,35 @@ public class Mapeador {
 	 * @throws ParserConfigurationException 
 	 * @throws IOException 
 	 */
-	public static void mapearXml(String xmlName) throws ParserConfigurationException, SAXException, IOException {
+	public static void mapearXml(String xmlName) throws MapeoException {
 
-		// Creo un parser
-		// TODO Wrappear las excepciones de SAX 
-			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+				// Creo un parser
+				// TODO Wrappear las excepciones de SAX 
+				SAXParser parser = null;
 
-			// Parseo el archivo; el segundo parametro es una clase interna
-			// que necesita SAX
-			parser.parse(xmlName, new LectorSax());
+				try {
+					parser = SAXParserFactory.newInstance().newSAXParser();
 
+					// Parseo el archivo; el segundo parametro es una clase interna
+					// que necesita SAX
+					parser.parse(xmlName, new LectorSax());
+
+				} catch (ParserConfigurationException e) {
+					throw new MapeoException(e.getMessage());
+				} catch (MapeoCampoRepetidoException e) {
+					throw e;
+				} catch (MapeoTablaRepetidaException e) {
+					throw e;
+				} catch (MapeoClaseRepetidaException e) {
+					throw e;
+				} catch (SAXException e) {
+					throw new MapeoException(e.getMessage());
+				} catch (IOException e) {
+					throw new MapeoException(e.getMessage());
+				}
+				if (mapeoRaiz == null || mapeoRaiz.getTablas().isEmpty()) {
+					throw new MapeoException(msjErrorMapeoNoRealizado);
+				}
 	}
 
 	private static Boolean isTablaRepetida(String nombreTabla) {
@@ -124,11 +144,13 @@ public class Mapeador {
 		 * @param localName
 		 * @param elementName
 		 * @param attributes
+		 * @throws MapeoClaseRepetidaException 
 		 * @throws SAXException
 		 */
 		@Override
 		public void startElement(String uri, String localName,
-				String elementName, Attributes attributes) throws SAXException {
+				String elementName, Attributes attributes) throws MapeoCampoRepetidoException
+				, MapeoTablaRepetidaException, MapeoClaseRepetidaException{
 			// Si el elemento abierto es "mapeo-raiz" es la raiz del archivo
 			// *-_or.xml
 			// Se lo seteo a la clase estatica mapeoRaiz del Mapeador
@@ -163,7 +185,7 @@ public class Mapeador {
 						// Agrego la tabla a las tablas del mapeo
 						mapeoRaiz.getTablas().add(0, tabla);
 					} else {
-						throw new MapeoClaseRepetidaExcepcion(nombreClase);
+						throw new MapeoClaseRepetidaException(nombreClase);
 					}
 
 				} else {
