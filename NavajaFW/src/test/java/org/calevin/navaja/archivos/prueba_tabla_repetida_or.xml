@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <raiz-mapeo>
         <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
-            <primary-key>
-                <campo nombre="id" />
-            </primary-key>
-
-            <campo nombre="id" nombre-como-atributo="id" tipo="INTEGER"/>
         </tabla>
 
         <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
-            <primary-key>
-                <campo nombre="idRepetida" />
-            </primary-key>
-
-            <campo nombre="idRepetida" nombre-como-atributo="id" tipo="INTEGER"/>
         </tabla>
-
 </raiz-mapeo>
