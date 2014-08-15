@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<raiz-mapeo>
+        <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
+        </tabla>
+
+        <tabla nombre="prueba_segunda_tabla" clase="org.empresa.beans.Prueba">
+        </tabla>
+</raiz-mapeo>
