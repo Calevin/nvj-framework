@@ -2,7 +2,7 @@ package org.calevin.navaja.mapeo;
 
 import java.util.ArrayList;
 
-import org.calevin.navaja.excepciones.mapeo.ClaseNoExisteEnElMapeoExcepcion;
+import org.calevin.navaja.excepciones.mapeo.ClaseNoExisteEnElMapeoException;
 
 /**
  * Clase que reprensenta el elemento raiz del xml Mapeo OR
@@ -19,7 +19,7 @@ public class RaizMapeo {
      * su correspondiente TablaMapeo
      * @return TablaMapeo correspondiente a ese nombre de clase en el mapeo
      */
-    public TablaMapeo getTablaPorNombreClase(String nombreClase) throws ClaseNoExisteEnElMapeoExcepcion {
+    public TablaMapeo getTablaPorNombreClase(String nombreClase) throws ClaseNoExisteEnElMapeoException {
         //Se iteran las tablas cargadas
         for (TablaMapeo tabla : this.tablas) {
             //Si nombre indicado coincide con una clase se retorna su correspondiente tabla
@@ -27,7 +27,7 @@ public class RaizMapeo {
                 //Se retorna
                 return tabla;
             } else {
-                throw new org.calevin.navaja.excepciones.mapeo.ClaseNoExisteEnElMapeoExcepcion(nombreClase);
+                throw new org.calevin.navaja.excepciones.mapeo.ClaseNoExisteEnElMapeoException(nombreClase);
             }
         }
 
