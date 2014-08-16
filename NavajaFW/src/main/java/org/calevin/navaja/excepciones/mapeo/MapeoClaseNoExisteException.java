@@ -3,11 +3,11 @@ package org.calevin.navaja.excepciones.mapeo;
 import org.calevin.navaja.util.NavajaConstantes;
 import org.calevin.navaja.util.NavajaStringUtil;
 
-public class ClaseNoExisteEnElMapeoException extends MapeoException {
+public class MapeoClaseNoExisteException extends MapeoException {
 
 	private static final long serialVersionUID = -2186669854652969686L;
 
-	public ClaseNoExisteEnElMapeoException(String nombreClase) {
+	public MapeoClaseNoExisteException(String nombreClase) {
         super(NavajaStringUtil.conmutarCaseChar(NavajaConstantes.CLASE, 0) 
                 + NavajaConstantes.ESPACIO_COMILLA
                 + nombreClase

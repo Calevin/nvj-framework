@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import junit.framework.Assert;
 
-import org.calevin.navaja.excepciones.mapeo.ClaseNoExisteEnElMapeoException;
+import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
 import org.calevin.navaja.mapeo.RaizMapeo;
 import org.calevin.navaja.mapeo.TablaMapeo;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class RaizMapeoTest {
 			} else {
 				fail("La respuesta fue nula");
 			}
-		} catch (ClaseNoExisteEnElMapeoException e) {
+		} catch (MapeoClaseNoExisteException e) {
 			fail("Exception" + e.getCause());
 		}
 	}
@@ -57,7 +57,7 @@ public class RaizMapeoTest {
 			tmp = raizMapeo.getTablaPorNombreClase("ninguno");
 			fail("No lanzo la exception, tmp = " + tmp.getNombre());
 		} catch (Exception e) {
-			Assert.assertTrue(e instanceof ClaseNoExisteEnElMapeoException);	
+			Assert.assertTrue(e instanceof MapeoClaseNoExisteException);	
 		}
 	}
 }
