@@ -50,4 +50,5 @@ public class NavajaConstantes {
     public static final String VACIA_O_INVALIDO = VACIA + ESPACIO + O + ESPACIO + INVALIDO;
     public static final String VACIA_O_NULA = VACIA + ESPACIO + O + ESPACIO + NULA;
     public static final String VACIO_O_NULO = VACIO + ESPACIO + O + ESPACIO + NULO;
+    public static final String GUION_BAJO_OR_PUNTO_XML = "_or.xml";
 }
