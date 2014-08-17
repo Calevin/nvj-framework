@@ -59,12 +59,12 @@ public class CargadorRecursosNvj {
             }
         }
         
-        if (Mapeador.getMapeoRaiz() == null || Mapeador.getMapeoRaiz().getTablas().isEmpty()) {
+        if (Mapeador.getRaizMapeo() == null || Mapeador.getRaizMapeo().getTablas().isEmpty()) {
             throw new CargadorRecursosNoExistenArchivosMapeoException();        	
         }
         
         //Se setea la instancia NavajaConector de la app el mapeo recien generado
-        NavajaConector.getInstance().setMapeoRaiz(Mapeador.getMapeoRaiz());
+        NavajaConector.getInstance().setMapeoRaiz(Mapeador.getRaizMapeo());
         
         //Se inicializa los recursos segun lo implementado en el metodo sobrescrito
         recursosProyecto.iniciarRecursos();

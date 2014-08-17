@@ -24,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class Mapeador {
 
-	private static RaizMapeo mapeoRaiz = null;
+	private static RaizMapeo raizMapeo = null;
 	private static String msjErrorMapeoNoRealizado ="Mapeo no realizado, el archivo no es un mapeo correcto";
 	//TODO verificar tipo
 	/*
@@ -39,12 +39,12 @@ public class Mapeador {
     };
 	*/    
 	
-	public static RaizMapeo getMapeoRaiz() {
-		return mapeoRaiz;
+	public static RaizMapeo getRaizMapeo() {
+		return raizMapeo;
 	}
 
 	public static void limpiarMapeo() {
-		mapeoRaiz = null;
+		raizMapeo = null;
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class Mapeador {
 				} catch (IOException e) {
 					throw new MapeoException(e.getMessage());
 				}
-				if (mapeoRaiz == null || mapeoRaiz.getTablas().isEmpty()) {
+				if (raizMapeo == null || raizMapeo.getTablas().isEmpty()) {
 					throw new MapeoException(msjErrorMapeoNoRealizado);
 				}
 	}
@@ -89,7 +89,7 @@ public class Mapeador {
 	private static Boolean isTablaRepetida(String nombreTabla) {
 		boolean bandera = false;
 
-		Iterator<TablaMapeo> tablas = mapeoRaiz.getTablas().iterator();
+		Iterator<TablaMapeo> tablas = raizMapeo.getTablas().iterator();
 
 		while (tablas.hasNext() && bandera == false) {
 			TablaMapeo tabla = (TablaMapeo) tablas.next();
@@ -102,7 +102,7 @@ public class Mapeador {
 	private static Boolean isClaseRepetida(String nombreNuevaClase) {
 		boolean bandera = false;
 
-		Iterator<String> nombresDeClase = mapeoRaiz.getNombresClase()
+		Iterator<String> nombresDeClase = raizMapeo.getNombresClase()
 				.iterator();
 
 		while (nombresDeClase.hasNext() && bandera == false) {
@@ -153,8 +153,8 @@ public class Mapeador {
 			// Si el elemento abierto es "mapeo-raiz" es la raiz del archivo
 			// *-_or.xml
 			// Se lo seteo a la clase estatica mapeoRaiz del Mapeador
-			if (elementName.equals(RAIZMAPEO) && (mapeoRaiz == null)) {
-				mapeoRaiz = new RaizMapeo();
+			if (elementName.equals(RAIZMAPEO) && (raizMapeo == null)) {
+				raizMapeo = new RaizMapeo();
 			}
 
 			// Si el elemento es "tabla"
@@ -179,10 +179,10 @@ public class Mapeador {
 						tabla.setNombreComoClase(nombreClase);
 
 						// Agrego el nombre la lista de nombres de clase
-						mapeoRaiz.setNombreClase(nombreClase);
+						raizMapeo.setNombreClase(nombreClase);
 
 						// Agrego la tabla a las tablas del mapeo
-						mapeoRaiz.getTablas().add(0, tabla);
+						raizMapeo.getTablas().add(0, tabla);
 					} else {
 						throw new MapeoClaseRepetidaException(nombreClase);
 					}
@@ -199,14 +199,14 @@ public class Mapeador {
 			if (elementName.equals(PRIMARYKEY)) {
 				esPk = true;
 				PrimaryKeyMapeo pk = new PrimaryKeyMapeo();
-				mapeoRaiz.getTablas().get(0).setPrimaryKeyMapeo(pk);
+				raizMapeo.getTablas().get(0).setPrimaryKeyMapeo(pk);
 
 			} else if (elementName.equals(NavajaConstantes.CAMPO)) {
 				// Si no es una PK y es un CampoMapeo
 				String nombreCampo = attributes
 						.getValue(NavajaConstantes.NOMBRE);
 
-				if (!isCampoRepetido(mapeoRaiz.getTablas().get(0), nombreCampo)) {
+				if (!isCampoRepetido(raizMapeo.getTablas().get(0), nombreCampo)) {
 	                //instancio un Campo
 	                //Le seteo el nombre
                     CampoMapeo campo = new CampoMapeo();
@@ -214,12 +214,12 @@ public class Mapeador {
                     
                     //Si era pk, agrego ese campo a la pk                
                     if (esPk) {
-                        PrimaryKeyMapeo pk = mapeoRaiz.getTablas().get(0).getPrimaryKeyMapeo();
+                        PrimaryKeyMapeo pk = raizMapeo.getTablas().get(0).getPrimaryKeyMapeo();
                         pk.getCampos().add(0, campo);
 
                     } else {
                         //Si no era pk tomo esta tabla y le seteo este campo
-                        mapeoRaiz.getTablas().get(0).getCampos().add(0, campo);
+                        raizMapeo.getTablas().get(0).getCampos().add(0, campo);
                         campo.setNombreComoAtributo(attributes.getValue(NOMBRECOMOATRIBUTO));
                         //TODO revisar tipo
                         //campo.setTipo(_setearTipo(attributes.getValue("tipo")));

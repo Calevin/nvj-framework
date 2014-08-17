@@ -65,12 +65,12 @@ public class MapeadorTest {
 		Mapeador.mapearXml(archivoPruebaUnaTabla);
 		
 		//Probando nombreClases
-		nombresClase = Mapeador.getMapeoRaiz().getNombresClase();
+		nombresClase = Mapeador.getRaizMapeo().getNombresClase();
 		Assert.assertTrue(nombresClase.size() == 1);
 		Assert.assertTrue(nombresClase.get(0).equals(nombreClasePrimera));	
 
 		//Probando Tablas
-		tablas = Mapeador.getMapeoRaiz().getTablas();
+		tablas = Mapeador.getRaizMapeo().getTablas();
 		Assert.assertTrue(tablas.size() == 1);
 		TablaMapeo tablaMapeada = tablas.get(0);
 		Assert.assertTrue(tablaMapeada.equals(tablaPrimera));
@@ -85,13 +85,13 @@ public class MapeadorTest {
 		Mapeador.mapearXml(archivoPruebaVariasTablas);
 
 		//Probando nombreClases
-		nombresClase = Mapeador.getMapeoRaiz().getNombresClase();
+		nombresClase = Mapeador.getRaizMapeo().getNombresClase();
 		Assert.assertTrue(nombresClase.size() == 2);
 		Assert.assertTrue(nombresClase.get(0).equals(nombreClasePrimera));
 		Assert.assertTrue(nombresClase.get(1).equals(nombreClaseSegunda));
 		
 		//Probando Tablas
-		tablas = Mapeador.getMapeoRaiz().getTablas();
+		tablas = Mapeador.getRaizMapeo().getTablas();
 		Assert.assertTrue(tablas.size() == 2);
 		//Primera Tabla
 		TablaMapeo tablaMapeada = tablas.get(1);
@@ -111,12 +111,12 @@ public class MapeadorTest {
 		Mapeador.mapearXml(archivoPruebaPkVariasCols);
 
 		//Probando nombreClases
-		nombresClase = Mapeador.getMapeoRaiz().getNombresClase();
+		nombresClase = Mapeador.getRaizMapeo().getNombresClase();
 		Assert.assertTrue(nombresClase.size() == 1);
 		Assert.assertTrue(nombresClase.get(0).equals(nombreClasePrimera));	
 
 		//Probando Tablas
-		tablas = Mapeador.getMapeoRaiz().getTablas();
+		tablas = Mapeador.getRaizMapeo().getTablas();
 		Assert.assertTrue(tablas.size() == 1);
 		TablaMapeo tablaMapeada = tablas.get(0);
 
