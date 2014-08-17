@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <raiz-mapeo>
-        <tabla nombre="prueba" clase="org.empresa.beans.Prueba">
+        <tabla nombre="pruebaCargador" clase="org.empresa.beans.PruebaCargador">
             <primary-key>
-                <campo nombre="id" />
+                <campo nombre="idCargador" />
             </primary-key>
 
-            <campo nombre="id" nombre-como-atributo="id" tipo="INTEGER"/>
-            <campo nombre="des" nombre-como-atributo="des" tipo="VARCHAR"/>
+            <campo nombre="id" nombre-como-atributo="idCargador" tipo="INTEGER"/>
+            <campo nombre="des" nombre-como-atributo="desCargador" tipo="VARCHAR"/>
         </tabla>
 
 </raiz-mapeo>
