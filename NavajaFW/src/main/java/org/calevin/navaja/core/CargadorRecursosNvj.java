@@ -2,12 +2,15 @@ package org.calevin.navaja.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.sql.DataSource;
 
 import org.calevin.navaja.excepciones.core.CargadorRecursosCarpetaConfVaciaException;
+import org.calevin.navaja.excepciones.core.CargadorRecursosConexionFallidaException;
 import org.calevin.navaja.excepciones.core.CargadorRecursosException;
 import org.calevin.navaja.excepciones.core.CargadorRecursosNoExistenArchivosMapeoException;
 import org.calevin.navaja.excepciones.mapeo.MapeoException;
@@ -76,6 +79,16 @@ public class CargadorRecursosNvj {
             throw new org.calevin.navaja.excepciones.core.CargadorRecursosDataSourceNuloException();
         }
 
-        NavajaConector.getInstance().setDataSource(dataSource);        
+        Connection conexion;
+		try {
+			conexion = dataSource.getConnection();
+			
+			if (conexion != null  && conexion.isValid(0)) {
+		        NavajaConector.getInstance().setDataSource(dataSource);
+			}
+		} catch (SQLException e) {
+			// TODO COMPLETAR
+			throw new CargadorRecursosConexionFallidaException(e);
+		}
     }
 }
