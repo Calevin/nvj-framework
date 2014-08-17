@@ -103,30 +103,22 @@ public class UtilitarioBean {
      */
     public static ArrayList<String> listarAtts(Class<?> clazz) {
         ArrayList<String> atributos = new ArrayList<String>();
-        //TODO ver: Class<?> clase;
         Method metodos[];
 
-        //TODO ver: try {
-            //TODO ver: clase = Class.forName(clazz.getName());
-            //Se toma los metodos de la clase
-            //TODO ver: metodos = clase.getMethods();
-            metodos = clazz.getMethods();
-            //Se recorre los metodos
-            for (Method metodo : metodos) {
-                //Se toma el nombre del metodo
-                String nombreMetodo = metodo.getName();
-                //Si comienza con get y no es gerClass
-                if ((nombreMetodo.startsWith(NavajaConstantes.GET)) && (!nombreMetodo.equals("getClass"))) {
-                    //Se toma el nombre del metodo quitandole el get inicial
-                    String nombreAtributo = metodo.getName().substring(3);
-                    //Se lo agrega al Array a retornar
-                    atributos.add(NavajaStringUtil.conmutarCaseChar(nombreAtributo, 0));
-                }
+        //Se toma los metodos de la clase
+        metodos = clazz.getMethods();
+        //Se recorre los metodos
+        for (Method metodo : metodos) {
+            //Se toma el nombre del metodo
+            String nombreMetodo = metodo.getName();
+            //Si comienza con get y no es gerClass
+            if ((nombreMetodo.startsWith(NavajaConstantes.GET)) && (!nombreMetodo.equals("getClass"))) {
+               //Se toma el nombre del metodo quitandole el get inicial
+               String nombreAtributo = metodo.getName().substring(3);
+               //Se lo agrega al Array a retornar
+               atributos.add(NavajaStringUtil.conmutarCaseChar(nombreAtributo, 0));
             }
-        /*TODO ver: 
-        } catch (ClassNotFoundException e) {
-            System.out.println("ERROR al obtener atributos" + e);
-        }*/
+         }
 
         return atributos;
     }    
