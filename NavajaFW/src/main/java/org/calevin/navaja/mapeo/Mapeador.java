@@ -58,8 +58,7 @@ public class Mapeador {
 	 */
 	public static void mapearXml(String xmlName) throws MapeoException {
 
-				// Creo un parser
-				// TODO Wrappear las excepciones de SAX 
+				// Creo un parser 
 				SAXParser parser = null;
 
 				try {

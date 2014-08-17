@@ -15,8 +15,6 @@ public class TablaMapeo {
     private String nombre;
     private String nombreComoClase;
 
-
-
     /**
 	* Retorna el CampoMapeo de la tabla correspondiente a ese nombre segun lo
     * mapeado en los archivos de configuracion
