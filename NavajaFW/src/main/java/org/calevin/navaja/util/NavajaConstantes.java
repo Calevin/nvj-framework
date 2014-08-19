@@ -9,6 +9,7 @@ public class NavajaConstantes {
     public static final String COMILLA = "\"";
     public static final String COMA = ",";    
     public static final String CON = "con";
+    public static final String CONEXION = "conexion";     
     public static final String DE = "de";    
     public static final String DEFINIDA = "definida";
     public static final String DEFINIDO  = "definido";   
@@ -18,6 +19,7 @@ public class NavajaConstantes {
     public static final String EN = "en";
     public static final String EN_EL_MAPEO = "en el mapeo";
     public static final String ERROR = "error";    
+    public static final String ES = "es";
     public static final String ESPACIO = " ";
     public static final String EXISTE = "existe";
     public static final String GET = "get";     
@@ -58,5 +60,7 @@ public class NavajaConstantes {
     public static final String GUION_BAJO_OR_PUNTO_XML = "_or.xml";
     public static final String TIPO_SQL = TIPO + ESPACIO + SQL;
     public static final String TIPO_DESCONOCIDO = TIPO + ESPACIO + DESCONOCIDO;
-    public static final String PUNTO_ESPACIO = PUNTO + ESPACIO;    
+    public static final String PUNTO_ESPACIO = PUNTO + ESPACIO;
+    public static final String CONEXION_NULA = LA + CONEXION + ESPACIO + ES + ESPACIO +  NULA;    
+    public static final String CONEXION_INVALIDA = LA + CONEXION + ESPACIO + ES + ESPACIO + INVALIDA;
 }
