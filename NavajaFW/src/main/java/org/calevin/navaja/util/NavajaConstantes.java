@@ -7,11 +7,14 @@ public class NavajaConstantes {
     public static final String CAMPO = "campo";
     public static final String CLASE = "clase";
     public static final String COMILLA = "\"";
+    public static final String COMA = ",";    
     public static final String CON = "con";
+    public static final String DE = "de";    
     public static final String DEFINIDA = "definida";
     public static final String DEFINIDO  = "definido";   
     public static final String DEFINIDA_DOS_VECES = "definida dos veces";    
     public static final String DEFINIDO_DOS_VECES = "definido dos veces";
+    public static final String DESCONOCIDO = "desconocido";    
     public static final String EN = "en";
     public static final String EN_EL_MAPEO = "en el mapeo";
     public static final String ERROR = "error";    
@@ -30,6 +33,7 @@ public class NavajaConstantes {
     public static final String SET = "set";   
     public static final String SOPORTADA = "soportada";
     public static final String SOPORTADO = "soportado";
+    public static final String SQL = "SQL";    
     public static final String TABLA = "tabla";
     public static final String VACIA = "vacia";
     public static final String VACIO = "vacio";
@@ -39,6 +43,7 @@ public class NavajaConstantes {
     //COMPUESTAS
     public static final String ESPACIO_COMILLA = ESPACIO + COMILLA;
     public static final String COMILLA_ESPACIO = COMILLA + ESPACIO;
+    public static final String COMA_ESPACIO = COMA + ESPACIO;    
     public static final String NO_EXISTE = NO + ESPACIO + EXISTE;
     public static final String NO_DEFINIDA = NO + DEFINIDA;
     public static final String NO_DEFINIDO = NO + DEFINIDO;    
@@ -51,4 +56,7 @@ public class NavajaConstantes {
     public static final String VACIA_O_NULA = VACIA + ESPACIO + O + ESPACIO + NULA;
     public static final String VACIO_O_NULO = VACIO + ESPACIO + O + ESPACIO + NULO;
     public static final String GUION_BAJO_OR_PUNTO_XML = "_or.xml";
+    public static final String TIPO_SQL = TIPO + ESPACIO + SQL;
+    public static final String TIPO_DESCONOCIDO = TIPO + ESPACIO + DESCONOCIDO;
+    public static final String PUNTO_ESPACIO = PUNTO + ESPACIO;    
 }
