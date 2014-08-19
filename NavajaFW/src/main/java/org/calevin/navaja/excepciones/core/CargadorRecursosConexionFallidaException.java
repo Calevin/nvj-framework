@@ -11,6 +11,12 @@ public class CargadorRecursosConexionFallidaException extends
 	
 	private static final String CONEXION_FALLIDA = "Conexion fallida";
 
+	public CargadorRecursosConexionFallidaException(String mensaje) {
+        super(CONEXION_FALLIDA
+        		+ NavajaConstantes.PUNTO_ESPACIO
+        		+ mensaje);
+	}
+	
 	public CargadorRecursosConexionFallidaException(Exception e) {
         super(CONEXION_FALLIDA
         		+ NavajaConstantes.PUNTO_ESPACIO
