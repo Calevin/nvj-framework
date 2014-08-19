@@ -46,7 +46,7 @@ public class RaizMapeoTest {
 				fail("La respuesta fue nula");
 			}
 		} catch (MapeoClaseNoExisteException e) {
-			fail("Exception" + e.getCause());
+			fail("Exception" + e);
 		}
 	}
 

@@ -36,7 +36,7 @@ public class UtilitarioBeanTest {
 			Assert.assertTrue(atributoStringValor.equals((String) UtilitarioBean.invocarGetter(mockClase, atributoStringNombre)));
 			Assert.assertTrue(atributoIntegerValor.equals((Integer) UtilitarioBean.invocarGetter(mockClase, atributoIntegerNombre)));			
 		} catch (BeanException e) {
-			fail("Exception! " + e.getCause());
+			fail("Exception! " + e);
 		}
 		
 	}
@@ -55,7 +55,7 @@ public class UtilitarioBeanTest {
 			Assert.assertTrue(atributoIntegerValorAlternativo.equals((Integer) UtilitarioBean.invocarGetter(mockClase, atributoIntegerNombre)));
 			
 		} catch (BeanException e) {
-			fail("Exception! " + e.getCause());
+			fail("Exception! " + e);
 		}
 		
 	}
