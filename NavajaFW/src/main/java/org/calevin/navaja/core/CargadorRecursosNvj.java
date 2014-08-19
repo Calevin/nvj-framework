@@ -17,6 +17,7 @@ import org.calevin.navaja.excepciones.mapeo.MapeoException;
 import org.calevin.navaja.mapeo.Mapeador;
 import org.calevin.navaja.sql.NavajaConector;
 import org.calevin.navaja.util.NavajaConstantes;
+import org.calevin.navaja.util.NavajaStringUtil;
 
 /**
  * Clase utilizada para cargar los recursos necesarios.
@@ -79,16 +80,36 @@ public class CargadorRecursosNvj {
             throw new org.calevin.navaja.excepciones.core.CargadorRecursosDataSourceNuloException();
         }
 
-        Connection conexion;
+        Connection conexion = null;
 		try {
 			conexion = dataSource.getConnection();
 			
-			if (conexion != null  && conexion.isValid(0)) {
-		        NavajaConector.getInstance().setDataSource(dataSource);
-			}
+			if (conexion == null){
+				throw new CargadorRecursosConexionFallidaException(
+						NavajaStringUtil.conmutarCaseChar(NavajaConstantes.CONEXION_NULA, 0)
+						+ NavajaConstantes.PUNTO);
+			} else if (!conexion.isValid(0)) {
+				throw new CargadorRecursosConexionFallidaException(
+						NavajaStringUtil.conmutarCaseChar(NavajaConstantes.CONEXION_INVALIDA, 0)
+						+ NavajaConstantes.COMA_ESPACIO
+						+ NavajaConstantes.CONEXION
+						+ NavajaConstantes.ESPACIO_COMILLA
+						+ conexion
+						+ NavajaConstantes.COMILLA
+						+ NavajaConstantes.PUNTO);				
+			} else {
+		        NavajaConector.getInstance().setDataSource(dataSource);				
+			}			
 		} catch (SQLException e) {
-			// TODO COMPLETAR
 			throw new CargadorRecursosConexionFallidaException(e);
+		} finally {
+			if (conexion != null) {
+				try {
+					conexion.close(); 
+				} catch (Exception e) {
+					throw new CargadorRecursosConexionFallidaException(e);
+				} 
+			}
 		}
     }
 }
