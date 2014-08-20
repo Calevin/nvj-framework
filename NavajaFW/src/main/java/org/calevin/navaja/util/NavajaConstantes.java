@@ -3,6 +3,7 @@ package org.calevin.navaja.util;
 public class NavajaConstantes {
 
     public static final String AL_INVOCAR_METODO = "al invocar metodo";	  
+    public static final String ATRIBUTO = "atributo";
     public static final String CARPETA_DE_CONF = "carpeta de configuración";
     public static final String CAMPO = "campo";
     public static final String CLASE = "clase";
@@ -18,11 +19,13 @@ public class NavajaConstantes {
     public static final String DESCONOCIDO = "desconocido";    
     public static final String EN = "en";
     public static final String EN_EL_MAPEO = "en el mapeo";
+    public static final String EL = "el";    
     public static final String ERROR = "error";    
     public static final String ES = "es";
     public static final String ESPACIO = " ";
     public static final String EXISTE = "existe";
     public static final String GET = "get";     
+    public static final String INSTANCIA = "instancia";    
     public static final String INVALIDA = "invalida";
     public static final String INVALIDO = "invalido";
     public static final String NO = "no";
@@ -63,4 +66,6 @@ public class NavajaConstantes {
     public static final String PUNTO_ESPACIO = PUNTO + ESPACIO;
     public static final String CONEXION_NULA = LA + CONEXION + ESPACIO + ES + ESPACIO +  NULA;    
     public static final String CONEXION_INVALIDA = LA + CONEXION + ESPACIO + ES + ESPACIO + INVALIDA;
+    public static final String ATRIBUTO_NULO = EL + ESPACIO + ATRIBUTO + ESPACIO + ES + ESPACIO + NULO;
+    public static final String INSTANCIA_NULA = LA + ESPACIO + INSTANCIA + ESPACIO + ES + ESPACIO + NULA;        
 }
