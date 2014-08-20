@@ -7,6 +7,16 @@ public class BeanInvocarGetterException extends BeanException {
 
 	private static final long serialVersionUID = -8981597463074541865L;
 
+	public BeanInvocarGetterException(String mensaje){
+		super(NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ERROR, 0)
+        		+ NavajaConstantes.ESPACIO
+        		+ NavajaConstantes.AL_INVOCAR_METODO
+        		+ NavajaConstantes.ESPACIO            		
+        		+ NavajaConstantes.GET
+        		+ NavajaConstantes.PUNTO_ESPACIO
+        		+ mensaje);
+	}
+	
 	public BeanInvocarGetterException() {
 		super(NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ERROR, 0)
         		+ NavajaConstantes.ESPACIO

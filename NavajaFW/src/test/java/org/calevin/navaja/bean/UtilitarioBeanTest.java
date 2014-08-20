@@ -8,6 +8,8 @@ import java.util.Collections;
 import junit.framework.Assert;
 
 import org.calevin.navaja.excepciones.bean.BeanException;
+import org.calevin.navaja.excepciones.bean.BeanInvocarGetterException;
+import org.calevin.navaja.excepciones.bean.BeanInvocarSetterException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +19,7 @@ public class UtilitarioBeanTest {
 	private MockClase mockClase = null;
 	private String atributoStringNombre = "atributoString";
 	private String atributoStringValor = "atributoValorString";
+	private String atributoInexistente = "inexistente";
 	private String atributoStringValorAlternativo = "atributoValorAlternativoString";	
 	private String atributoIntegerNombre = "atributoInteger";
 	private Integer atributoIntegerValor = 123;	
@@ -29,6 +32,7 @@ public class UtilitarioBeanTest {
 		atributosNombres.add(atributoStringNombre);
 	}
 	
+	// TESTS PARA invocarGetter:
 	@Test
 	public void invocarGetterCasoCorrectoTest(){
 		try {
@@ -41,8 +45,31 @@ public class UtilitarioBeanTest {
 		
 	}
 
+	@Test (expected=BeanInvocarGetterException.class)
+	public void invocarGetterCasoInstanciaNulaTest() throws Exception {
+		UtilitarioBean.invocarGetter(null, atributoStringNombre);			
+	}	
+
+	@Test (expected=BeanInvocarGetterException.class)
+	public void invocarGetterCasoAtributoNuloTest() throws Exception {
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
+		UtilitarioBean.invocarGetter(mockClase, null);
+	}
+
+	@Test
+	public void invocarGetterCasoAtributoInexistenteTest() {
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
+		try {
+			Assert.assertNull(UtilitarioBean.invocarGetter(mockClase, atributoInexistente));
+		} catch (BeanException e) {
+			fail("Exception! " + e);
+		}
+	}
+	
+	//TESTS PARA invocarSetter
 	@Test
 	public void invocarSetterCasoCorrectoTest(){
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
 		try {
 			//Seteo el valor alternativo para el atributo tipo String
 			UtilitarioBean.invocarSetter(mockClase, atributoStringNombre, atributoStringValorAlternativo);
@@ -59,6 +86,50 @@ public class UtilitarioBeanTest {
 		}
 		
 	}
+
+	@Test
+	public void invocarSetterCasoCorrectoValorNuloTest(){
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
+		try {
+			//Seteo el valor alternativo para el atributo tipo String
+			UtilitarioBean.invocarSetter(mockClase, atributoStringNombre, null);
+			//Compruebo el valor alternativo para el atributo tipo String
+			Assert.assertTrue(((String) UtilitarioBean.invocarGetter(mockClase, atributoStringNombre)) == null);
+
+			//Seteo el valor alternativo para el atributo tipo Integer
+			UtilitarioBean.invocarSetter(mockClase, atributoIntegerNombre, null);
+			//Compruebo el valor alternativo para el atributo tipo Integer
+			Assert.assertTrue(((Integer) UtilitarioBean.invocarGetter(mockClase, atributoIntegerNombre)) == null);
+			
+		} catch (BeanException e) {
+			fail("Exception! " + e);
+		}
+		
+	}
+	
+	@Test (expected=BeanInvocarSetterException.class)
+	public void invocarSetterCasoInstanciaNulaTest() throws Exception {		
+		UtilitarioBean.invocarSetter(null, atributoStringNombre, atributoStringValorAlternativo);			
+	}		
+
+	@Test (expected=BeanInvocarSetterException.class) 
+	public void invocarSetterCasoAtributoNuloTest() throws Exception{
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
+		UtilitarioBean.invocarSetter(mockClase, null, atributoStringValorAlternativo);
+	}
+
+	@Test
+	public void invocarSetterCasoAtributoInexistenteTest() {
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
+		try {
+			UtilitarioBean.invocarSetter(mockClase, atributoInexistente, atributoStringValorAlternativo);
+		} catch (BeanException e) {
+			fail("Exception! " + e);
+		}
+		
+		Assert.assertTrue(atributoStringValor.equals(mockClase.getAtributoString()));
+		Assert.assertTrue(atributoIntegerValor.equals(mockClase.getAtributoInteger()));	
+	}
 	
 	@Test
 	public void listarAttsCasoCorrectoTest(){
@@ -69,6 +140,14 @@ public class UtilitarioBeanTest {
 		Collections.sort(atributosNombres);
 
 		Assert.assertTrue(rtalistarAtts.containsAll(atributosNombres));
+	}
+
+	@Test
+	public void listarAttsCasoClaseSinAtributosAccesiblesTest(){
+		ArrayList<String> rtalistarAtts = new ArrayList<String>();
+		rtalistarAtts = UtilitarioBean.listarAtts(MockClaseSinAtributosAccesibles.class);
+
+		Assert.assertTrue(rtalistarAtts.isEmpty());
 	}
 	
 	public class MockClase {
@@ -99,5 +178,17 @@ public class UtilitarioBeanTest {
 		public void setAtributoInteger(Integer atributoInteger) {
 			this.atributoInteger = atributoInteger;
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	public class MockClaseSinAtributosAccesibles {
+		
+		private String atributoStringNoAccesible;
+		private Integer atributoIntegerNoAccesible;
+		
+		public void setAtributoStringNoAccesible(String atributoStringNoAccesible) {
+			this.atributoStringNoAccesible = atributoStringNoAccesible;
+		}
+
 	}
 }

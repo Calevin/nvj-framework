@@ -19,6 +19,17 @@ public class UtilitarioBean {
      * @throws BeanException 
      */
     public static Object invocarGetter(Object instancia, String atributo) throws BeanException {
+    	
+    	if (atributo == null){
+            throw new BeanInvocarGetterException(
+            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ATRIBUTO_NULO, 0));
+    	} 
+
+    	if (instancia == null){
+            throw new BeanInvocarGetterException(
+            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.INSTANCIA_NULA, 0));
+    	} 
+    	
         //Method metodo;
         Method metodos[];
         Class<?> clase = null;
@@ -62,6 +73,16 @@ public class UtilitarioBean {
         Class<?> clase = null;
         String nombreMetodo = null;
 
+    	if (atributo == null){
+            throw new BeanInvocarSetterException(
+            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ATRIBUTO_NULO, 0));
+    	} 
+
+    	if (instancia == null){
+            throw new BeanInvocarSetterException(
+            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.INSTANCIA_NULA, 0));
+    	}
+    	
         try {
             //Se toma la clase del objeto recibido        	
             clase = Class.forName(instancia.getClass().getName());

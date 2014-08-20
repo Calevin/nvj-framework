@@ -7,6 +7,16 @@ public class BeanInvocarSetterException extends BeanException {
 
 	private static final long serialVersionUID = -7313492611709605581L;
 
+	public BeanInvocarSetterException(String mensaje){
+		super(NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ERROR, 0)
+        		+ NavajaConstantes.ESPACIO
+        		+ NavajaConstantes.AL_INVOCAR_METODO
+        		+ NavajaConstantes.ESPACIO            		
+        		+ NavajaConstantes.SET
+        		+ NavajaConstantes.PUNTO_ESPACIO
+        		+ mensaje);
+	}
+	
 	public BeanInvocarSetterException() {
 		super(NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ERROR, 0)
         		+ NavajaConstantes.ESPACIO
