@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<raiz-mapeo>
+        <tabla nombre="mock_tabla" clase="org.calevin.navaja.sql.NavajaDAOTest$MockClase">
+            <primary-key>
+                <campo nombre="atributo_int" />
+            </primary-key>
+
+            <campo nombre="atributo_int" nombre-como-atributo="atributoInteger" tipo="INTEGER"/>
+            <campo nombre="atributo_varchar" nombre-como-atributo="atributoString" tipo="VARCHAR"/>
+        </tabla>
+
+</raiz-mapeo>
