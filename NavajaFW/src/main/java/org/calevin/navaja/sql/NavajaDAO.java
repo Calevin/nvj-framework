@@ -23,12 +23,25 @@ public class NavajaDAO {
     protected ResultSet resSet = null;
     protected static DataSource dataSource = null;
     protected TablaMapeo tablaMapeo = null;
-
-    public NavajaDAO() throws MapeoClaseNoExisteException {
-    	tablaMapeo = NavajaConector.getInstance().getRaizMapeo().getTablaPorNombreClase(this.getClass().getName());
+   
+    public NavajaDAO() {
+    	super();
     }
     
-    public void insertarme(){
+    private void cargarTabla() throws MapeoClaseNoExisteException{
+    	if (this.tablaMapeo == null){
+    		this.tablaMapeo = NavajaConector.getInstance().getRaizMapeo().getTablaPorNombreClase(this.getClass().getName());    		
+    	}
+    }
+    
+    public void insertarme() {
+    	try {
+			cargarTabla();
+		} catch (MapeoClaseNoExisteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
         Connection con = null;
         PreparedStatement pstm = null;
         
