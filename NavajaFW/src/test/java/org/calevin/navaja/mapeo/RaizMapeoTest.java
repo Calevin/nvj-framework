@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
 import org.calevin.navaja.mapeo.RaizMapeo;
 import org.calevin.navaja.mapeo.TablaMapeo;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,6 +20,7 @@ public class RaizMapeoTest {
 	String NOMBRETABLA = "TablaMapeoUna";
 	String NOMBRETABLACOMOCLASE = "paquete.TablaMapeoUna";
 	TablaMapeo tablaMapeoUna = null;
+	ArrayList<TablaMapeo> tablas = null;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -27,12 +29,19 @@ public class RaizMapeoTest {
 		tablaMapeoUna.setNombre(NOMBRETABLA); 
 		tablaMapeoUna.setNombreComoClase(NOMBRETABLACOMOCLASE);
 		
-		ArrayList<TablaMapeo> tablas = new ArrayList<TablaMapeo>();
+		tablas = new ArrayList<TablaMapeo>();
 		tablas.add(tablaMapeoUna);
 		
 		raizMapeo.setTablas(tablas);
 	}
 
+	@After 
+	public void tearDown() {
+		raizMapeo = null;
+		tablaMapeoUna = null;
+		tablas = null;
+	}
+	
 	@Test
 	public void getTablaPorNombreClaseCasoCorrectoTest() {
 		try {
@@ -50,14 +59,8 @@ public class RaizMapeoTest {
 		}
 	}
 
-	@Test
-	public void getTablaPorNombreClaseCasoRespuestaNula() {
-		try {
-			TablaMapeo tmp = null;
-			tmp = raizMapeo.getTablaPorNombreClase("ninguno");
-			fail("No lanzo la exception, tmp = " + tmp.getNombre());
-		} catch (Exception e) {
-			Assert.assertTrue(e instanceof MapeoClaseNoExisteException);	
-		}
+	@Test (expected=MapeoClaseNoExisteException.class)
+	public void getTablaPorNombreClaseCasoRespuestaNula() throws MapeoClaseNoExisteException {
+		raizMapeo.getTablaPorNombreClase("ninguno");
 	}
 }

@@ -9,19 +9,19 @@ import org.calevin.navaja.excepciones.mapeo.MapeoClaseRepetidaException;
 import org.calevin.navaja.excepciones.mapeo.MapeoException;
 import org.calevin.navaja.excepciones.mapeo.MapeoTablaRepetidaException;
 import org.calevin.navaja.utiltest.ConstantesParaTests;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 
 @SuppressWarnings("deprecation")
 public class MapeadorTest {
 
-	private String archivoPruebaUnaTabla = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_una_tabla_or.xml";
-	private String archivoPruebaVariasTablas = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_varias_tablas_or.xml";
-	private String archivoPruebaPkVariasCols = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_pk_varias_cols_or.xml";	
-	private String archivoPruebaTablaRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_tabla_repetida_or.xml";
-	private String archivoPruebaColumnaRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_columna_repetida_or.xml";
-	private String archivoPruebaClaseRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_clase_repetida_or.xml";
-	private String archivoPruebaMapeoVacio = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_mapeo_vacio_or.xml";
+	private String archivoPruebaUnaTabla = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_una_tabla_or.xml";
+	private String archivoPruebaVariasTablas = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_varias_tablas_or.xml";
+	private String archivoPruebaPkVariasCols = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_pk_varias_cols_or.xml";	
+	private String archivoPruebaTablaRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_tabla_repetida_or.xml";
+	private String archivoPruebaColumnaRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_columna_repetida_or.xml";
+	private String archivoPruebaClaseRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_clase_repetida_or.xml";
+	private String archivoPruebaMapeoVacio = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebamapeador/prueba_mapeo_vacio_or.xml";
 	
     private ArrayList<TablaMapeo> tablas = null;
     private ArrayList<String> nombresClase = null;	
@@ -33,36 +33,16 @@ public class MapeadorTest {
     private PrimaryKeyMapeo pk = null;
     private PrimaryKeyMapeo pkSegunda = null;
     private PrimaryKeyMapeo pkVariasColumnas = null;    
-       
-	@Before 
-	public void setUp() throws Exception {
 
-		tablas = new ArrayList<TablaMapeo>();
-		nombresClase = new ArrayList<String>();
-		//Tablas
-		tablaPrimera = new TablaMapeo();
-		tablaPrimera.setNombre("prueba");
-		tablaPrimera.setNombreComoClase(nombreClasePrimera);
-		tablaPrimera.getCampos().add(0, new CampoMapeo("id","id"));
-		tablaPrimera.getCampos().add(1, new CampoMapeo("des","des"));
-		pk = new PrimaryKeyMapeo();
-		pk.getCampos().add(new CampoMapeo("id",null));
-		tablaPrimera.setPrimaryKeyMapeo(pk);
-		
-		tablaSegunda = new TablaMapeo();
-		tablaSegunda.setNombre("prueba_segunda_tabla");
-		tablaSegunda.setNombreComoClase(nombreClaseSegunda);
-		tablaSegunda.getCampos().add(0, new CampoMapeo("id_segunda","id_segunda"));
-		tablaSegunda.getCampos().add(1, new CampoMapeo("des_segunda","des_segunda"));
-		pkSegunda = new PrimaryKeyMapeo();
-		pkSegunda.getCampos().add(new CampoMapeo("id_segunda",null));
-		tablaSegunda.setPrimaryKeyMapeo(pkSegunda);		
+	@After
+	public void tearDown(){
+		tablas = null;
+		nombresClase = null;
+		Mapeador.limpiarMapeo();		
 	}
 	
 	@Test
 	public void mapeoCorrectoUnaTabla() throws Exception {
-		Mapeador.limpiarMapeo();
-
 		Mapeador.mapearXml(archivoPruebaUnaTabla);
 		
 		//Probando nombreClases
@@ -74,6 +54,7 @@ public class MapeadorTest {
 		tablas = Mapeador.getRaizMapeo().getTablas();
 		Assert.assertTrue(tablas.size() == 1);
 		TablaMapeo tablaMapeada = tablas.get(0);
+		inicializarTablaPrimera();
 		Assert.assertTrue(tablaMapeada.equals(tablaPrimera));
 		Assert.assertTrue(tablaMapeada.getPrimaryKeyMapeo().equals(pk));
 
@@ -81,7 +62,6 @@ public class MapeadorTest {
 
 	@Test
 	public void mapeoCorrectoVariasTabla() throws Exception{
-		Mapeador.limpiarMapeo();
 
 		Mapeador.mapearXml(archivoPruebaVariasTablas);
 
@@ -96,10 +76,12 @@ public class MapeadorTest {
 		Assert.assertTrue(tablas.size() == 2);
 		//Primera Tabla
 		TablaMapeo tablaMapeada = tablas.get(1);
+		inicializarTablaPrimera();
 		Assert.assertTrue(tablaMapeada.equals(tablaPrimera));
 		Assert.assertTrue(tablaMapeada.getPrimaryKeyMapeo().equals(pk));
 		//Segunda Tabla		
 		tablaMapeada = tablas.get(0);
+		inicializarTablaSegunda();
 		Assert.assertTrue(tablaMapeada.equals(tablaSegunda));
 		Assert.assertTrue(tablaMapeada.getPrimaryKeyMapeo().equals(pkSegunda));
 	
@@ -107,7 +89,6 @@ public class MapeadorTest {
 	
 	@Test
 	public void mapeoCorrectoPkVariasColumnas() throws Exception {
-		Mapeador.limpiarMapeo();
 
 		Mapeador.mapearXml(archivoPruebaPkVariasCols);
 
@@ -131,26 +112,44 @@ public class MapeadorTest {
 	
 	@Test (expected=MapeoTablaRepetidaException.class)
 	public void mapeoErroneoTablaRepetida() throws Exception {
-		Mapeador.limpiarMapeo();
 		Mapeador.mapearXml(archivoPruebaTablaRepetida);
 	
 	}
 	
 	@Test(expected = MapeoCampoRepetidoException.class)
 	public void mapeoErroneoColumnaRepetida() throws Exception {
-		Mapeador.limpiarMapeo();
 		Mapeador.mapearXml(archivoPruebaColumnaRepetida);	
 	}
 	
 	@Test(expected = MapeoClaseRepetidaException.class)
 	public void mapeoErroneoClaseRepetida() throws Exception {
-		Mapeador.limpiarMapeo();
 		Mapeador.mapearXml(archivoPruebaClaseRepetida);	
 	}
 	
 	@Test(expected = MapeoException.class)
 	public void mapeoArchivoVacio() throws Exception {
-		Mapeador.limpiarMapeo();
 		Mapeador.mapearXml(archivoPruebaMapeoVacio);
+	}
+	
+	private void inicializarTablaPrimera(){
+		tablaPrimera = new TablaMapeo();
+		tablaPrimera.setNombre("prueba");
+		tablaPrimera.setNombreComoClase(nombreClasePrimera);
+		tablaPrimera.getCampos().add(0, new CampoMapeo("id","id"));
+		tablaPrimera.getCampos().add(1, new CampoMapeo("des","des"));
+		pk = new PrimaryKeyMapeo();
+		pk.getCampos().add(new CampoMapeo("id",null));
+		tablaPrimera.setPrimaryKeyMapeo(pk);		
+	}
+
+	private void inicializarTablaSegunda(){
+		tablaSegunda = new TablaMapeo();
+		tablaSegunda.setNombre("prueba_segunda_tabla");
+		tablaSegunda.setNombreComoClase(nombreClaseSegunda);
+		tablaSegunda.getCampos().add(0, new CampoMapeo("id_segunda","id_segunda"));
+		tablaSegunda.getCampos().add(1, new CampoMapeo("des_segunda","des_segunda"));
+		pkSegunda = new PrimaryKeyMapeo();
+		pkSegunda.getCampos().add(new CampoMapeo("id_segunda",null));
+		tablaSegunda.setPrimaryKeyMapeo(pkSegunda);	
 	}
 }

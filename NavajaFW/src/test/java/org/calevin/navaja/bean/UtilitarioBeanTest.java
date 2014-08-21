@@ -3,6 +3,7 @@ package org.calevin.navaja.bean;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import junit.framework.Assert;
@@ -10,6 +11,7 @@ import junit.framework.Assert;
 import org.calevin.navaja.excepciones.bean.BeanException;
 import org.calevin.navaja.excepciones.bean.BeanInvocarGetterException;
 import org.calevin.navaja.excepciones.bean.BeanInvocarSetterException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,25 +26,28 @@ public class UtilitarioBeanTest {
 	private String atributoIntegerNombre = "atributoInteger";
 	private Integer atributoIntegerValor = 123;	
 	private Integer atributoIntegerValorAlternativo = 321;	
-	private ArrayList<String> atributosNombres = new ArrayList<String>();
+	private ArrayList<String> atributosNombres = new ArrayList<String>(
+			Arrays.asList(atributoIntegerNombre, atributoStringNombre));
+	
 	@Before
 	public void setUp() throws Exception {
-		mockClase = new MockClase();
-		atributosNombres.add(atributoIntegerNombre);
-		atributosNombres.add(atributoStringNombre);
+		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
+	}
+	
+	@After
+	public void tearDown() {
+		mockClase = null;
 	}
 	
 	// TESTS PARA invocarGetter:
 	@Test
 	public void invocarGetterCasoCorrectoTest(){
 		try {
-			mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
 			Assert.assertTrue(atributoStringValor.equals((String) UtilitarioBean.invocarGetter(mockClase, atributoStringNombre)));
 			Assert.assertTrue(atributoIntegerValor.equals((Integer) UtilitarioBean.invocarGetter(mockClase, atributoIntegerNombre)));			
 		} catch (BeanException e) {
 			fail("Exception! " + e);
 		}
-		
 	}
 
 	@Test (expected=BeanInvocarGetterException.class)
@@ -51,14 +56,12 @@ public class UtilitarioBeanTest {
 	}	
 
 	@Test (expected=BeanInvocarGetterException.class)
-	public void invocarGetterCasoAtributoNuloTest() throws Exception {
-		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
+	public void invocarGetterCasoAtributoNuloTest() throws Exception {	
 		UtilitarioBean.invocarGetter(mockClase, null);
 	}
 
 	@Test
 	public void invocarGetterCasoAtributoInexistenteTest() {
-		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
 		try {
 			Assert.assertNull(UtilitarioBean.invocarGetter(mockClase, atributoInexistente));
 		} catch (BeanException e) {
@@ -69,7 +72,6 @@ public class UtilitarioBeanTest {
 	//TESTS PARA invocarSetter
 	@Test
 	public void invocarSetterCasoCorrectoTest(){
-		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
 		try {
 			//Seteo el valor alternativo para el atributo tipo String
 			UtilitarioBean.invocarSetter(mockClase, atributoStringNombre, atributoStringValorAlternativo);
@@ -84,27 +86,24 @@ public class UtilitarioBeanTest {
 		} catch (BeanException e) {
 			fail("Exception! " + e);
 		}
-		
 	}
 
 	@Test
-	public void invocarSetterCasoCorrectoValorNuloTest(){
-		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
+	public void invocarSetterCasoCorrectoValorNuloTest(){	
 		try {
 			//Seteo el valor alternativo para el atributo tipo String
 			UtilitarioBean.invocarSetter(mockClase, atributoStringNombre, null);
 			//Compruebo el valor alternativo para el atributo tipo String
-			Assert.assertTrue(((String) UtilitarioBean.invocarGetter(mockClase, atributoStringNombre)) == null);
+			Assert.assertNull("atributoStringNombre no es nulo", UtilitarioBean.invocarGetter(mockClase, atributoStringNombre));
 
 			//Seteo el valor alternativo para el atributo tipo Integer
 			UtilitarioBean.invocarSetter(mockClase, atributoIntegerNombre, null);
 			//Compruebo el valor alternativo para el atributo tipo Integer
-			Assert.assertTrue(((Integer) UtilitarioBean.invocarGetter(mockClase, atributoIntegerNombre)) == null);
+			Assert.assertNull("atributoIntegerNombre no es nulo", UtilitarioBean.invocarGetter(mockClase, atributoIntegerNombre));
 			
 		} catch (BeanException e) {
 			fail("Exception! " + e);
 		}
-		
 	}
 	
 	@Test (expected=BeanInvocarSetterException.class)
@@ -113,14 +112,12 @@ public class UtilitarioBeanTest {
 	}		
 
 	@Test (expected=BeanInvocarSetterException.class) 
-	public void invocarSetterCasoAtributoNuloTest() throws Exception{
-		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);		
+	public void invocarSetterCasoAtributoNuloTest() throws Exception{	
 		UtilitarioBean.invocarSetter(mockClase, null, atributoStringValorAlternativo);
 	}
 
 	@Test
 	public void invocarSetterCasoAtributoInexistenteTest() {
-		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
 		try {
 			UtilitarioBean.invocarSetter(mockClase, atributoInexistente, atributoStringValorAlternativo);
 		} catch (BeanException e) {
