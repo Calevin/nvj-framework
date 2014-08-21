@@ -8,19 +8,20 @@ import org.calevin.navaja.excepciones.mapeo.MapeoCampoRepetidoException;
 import org.calevin.navaja.excepciones.mapeo.MapeoClaseRepetidaException;
 import org.calevin.navaja.excepciones.mapeo.MapeoException;
 import org.calevin.navaja.excepciones.mapeo.MapeoTablaRepetidaException;
+import org.calevin.navaja.utiltest.ConstantesParaTests;
 import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("deprecation")
 public class MapeadorTest {
 
-	private String archivoPruebaUnaTabla = "src/test/java/org/calevin/navaja/archivos/prueba_una_tabla_or.xml";
-	private String archivoPruebaVariasTablas = "src/test/java/org/calevin/navaja/archivos/prueba_varias_tablas_or.xml";
-	private String archivoPruebaPkVariasCols = "src/test/java/org/calevin/navaja/archivos/prueba_pk_varias_cols_or.xml";	
-	private String archivoPruebaTablaRepetida = "src/test/java/org/calevin/navaja/archivos/prueba_tabla_repetida_or.xml";
-	private String archivoPruebaColumnaRepetida = "src/test/java/org/calevin/navaja/archivos/prueba_columna_repetida_or.xml";
-	private String archivoPruebaClaseRepetida = "src/test/java/org/calevin/navaja/archivos/prueba_clase_repetida_or.xml";
-	private String archivoPruebaMapeoVacio = "src/test/java/org/calevin/navaja/archivos/prueba_mapeo_vacio_or.xml";
+	private String archivoPruebaUnaTabla = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_una_tabla_or.xml";
+	private String archivoPruebaVariasTablas = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_varias_tablas_or.xml";
+	private String archivoPruebaPkVariasCols = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_pk_varias_cols_or.xml";	
+	private String archivoPruebaTablaRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_tabla_repetida_or.xml";
+	private String archivoPruebaColumnaRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_columna_repetida_or.xml";
+	private String archivoPruebaClaseRepetida = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_clase_repetida_or.xml";
+	private String archivoPruebaMapeoVacio = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "prueba_mapeo_vacio_or.xml";
 	
     private ArrayList<TablaMapeo> tablas = null;
     private ArrayList<String> nombresClase = null;	
