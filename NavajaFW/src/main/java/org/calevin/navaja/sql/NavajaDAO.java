@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.sql.DataSource;
-
 import org.calevin.navaja.bean.UtilitarioBean;
 import org.calevin.navaja.excepciones.bean.BeanException;
 import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
@@ -17,11 +15,6 @@ import org.calevin.navaja.mapeo.TablaMapeo;
 
 public class NavajaDAO {
 
-    protected Connection conn = null;
-    protected Statement stat = null;
-    protected PreparedStatement preStat = null;
-    protected ResultSet resSet = null;
-    protected static DataSource dataSource = null;
     protected TablaMapeo tablaMapeo = null;
    
     public NavajaDAO() {
@@ -68,7 +61,7 @@ public class NavajaDAO {
 
         try {
 			con = NavajaConector.getInstance().getDataSource().getConnection();
-	        pstm = con.prepareCall(insercion);			
+	        pstm = con.prepareStatement(insercion);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,6 +89,26 @@ public class NavajaDAO {
 				e.printStackTrace();
 			}
         }
+        
+
+        System.out.println("\nLa Insercion " + insercion + ") ");
+
+        System.out.println("Por ejecutar " + pstm.toString());
+
+        try {
+			System.out.println("Cambios por la ejecucion: " + pstm.executeUpdate());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        try {
+			cerrarRecurso(con);
+			cerrarRecurso(pstm);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}        
     }
     
     /**
@@ -113,7 +126,7 @@ public class NavajaDAO {
             CampoMapeo campo = tabla.getCampos().get(i - 1);
             rta += campo.getNombre();
             //SI AUN QUEDAN CAMPOS LE AGREGO UNA COMA
-            if (i - 2 > 0) {
+            if (i - 2 >= 0) {
                 rta += ", ";
             }
         }
