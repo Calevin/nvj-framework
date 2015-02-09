@@ -1,5 +1,11 @@
 package org.calevin.navaja.sql;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.sql.DataSource;
 
 import org.calevin.navaja.mapeo.RaizMapeo;
@@ -27,6 +33,89 @@ public class NavajaConector {
     protected NavajaConector() {
     }
 
+    //TODO crear metodo para realizar querys
+    
+    /**
+     * 
+     */
+    public static int ejecutarUpdate(String query){
+    	int rta = -1;
+        Connection con = null;
+        PreparedStatement pstm = null;
+
+        try {
+        con = NavajaConector.getInstance().getDataSource().getConnection();
+        pstm = con.prepareStatement(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        try {
+        System.out.println("Por ejecutar " + pstm.toString());	
+        rta = pstm.executeUpdate();
+        System.out.println("Cambios DML por la ejecucion: " + rta);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        try {
+			cerrarRecurso(con);
+			cerrarRecurso(pstm);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+    	return rta;
+    }
+    
+    public static ResultSet ejecutarQuery(String query){
+    	ResultSet rta = null;
+        Connection con = null;
+        PreparedStatement pstm = null;
+
+        try {
+        con = NavajaConector.getInstance().getDataSource().getConnection();
+        pstm = con.prepareStatement(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        try {
+        System.out.println("Por ejecutar " + pstm.toString());	
+        rta = pstm.executeQuery();
+        System.out.println("Registros obtenidos: " + rta.getFetchSize());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        try {
+			cerrarRecurso(con);
+			cerrarRecurso(pstm);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+    	return rta;
+    }    
+    
+    //ESTE METODO TAMBIEN ESTA EN NavajaDAO, PARA CERRAR RECURSOS
+    private static void cerrarRecurso(Connection conn) throws SQLException {
+        if (null != conn) {
+                conn.close();
+        }
+    }
+
+    private static void cerrarRecurso(Statement stm) throws SQLException {
+        if (null != stm) {
+                stm.close();
+        }
+    }
     /**
      * Provee la instancia del Singleton
      *
