@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import org.calevin.navaja.excepciones.sql.CerrarRecursoException;
 import org.calevin.navaja.mapeo.RaizMapeo;
 
 /**
@@ -63,7 +63,7 @@ public class NavajaConector {
         try {
 			cerrarRecurso(con);
 			cerrarRecurso(pstm);
-		} catch (SQLException e) {
+		} catch (CerrarRecursoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -96,7 +96,7 @@ public class NavajaConector {
         try {
 			cerrarRecurso(con);
 			cerrarRecurso(pstm);
-		} catch (SQLException e) {
+		} catch (CerrarRecursoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -104,18 +104,22 @@ public class NavajaConector {
     	return rta;
     }    
     
-    //ESTE METODO TAMBIEN ESTA EN NavajaDAO, PARA CERRAR RECURSOS
-    private static void cerrarRecurso(Connection conn) throws SQLException {
-        if (null != conn) {
-                conn.close();
-        }
-    }
+    /**
+     * Cierra el recurso pasado por parametro.
+     * @param recurso 
+     * 			recurso a cerrar.
+     * @throws CerrarRecursoException
+     */
+	public static void cerrarRecurso(AutoCloseable recurso) throws CerrarRecursoException{
+	        if (null != recurso) {
+	        	try {
+	        	recurso.close();
+	        	} catch (Exception e){
+	        		throw new CerrarRecursoException(recurso, e);
+	        	}
+	    }		
+	}
 
-    private static void cerrarRecurso(Statement stm) throws SQLException {
-        if (null != stm) {
-                stm.close();
-        }
-    }
     /**
      * Provee la instancia del Singleton
      *
