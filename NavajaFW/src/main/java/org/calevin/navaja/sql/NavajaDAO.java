@@ -2,14 +2,13 @@ package org.calevin.navaja.sql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.calevin.navaja.bean.UtilitarioBean;
 import org.calevin.navaja.excepciones.bean.BeanException;
 import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
+import org.calevin.navaja.excepciones.sql.CerrarRecursoException;
 import org.calevin.navaja.mapeo.CampoMapeo;
 import org.calevin.navaja.mapeo.TablaMapeo;
 
@@ -21,32 +20,37 @@ public class NavajaDAO {
     	super();
     }
     
+    /**
+     * Define el atributo tablaMapeo de la clase a partir del nombre de la misma, obteniendolo del mapeo general desde NavajaConector.
+     * @throws MapeoClaseNoExisteException
+     */
     private void cargarTabla() throws MapeoClaseNoExisteException{
     	if (this.tablaMapeo == null){
     		this.tablaMapeo = NavajaConector.getInstance().getRaizMapeo().getTablaPorNombreClase(this.getClass().getName());    		
     	}
     }
     
-    public void insertarme() {
-    	try {
-			cargarTabla();
-		} catch (MapeoClaseNoExisteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+    /**
+     * inserta en la base de datos los valores actuales del objeto.
+     * @throws MapeoClaseNoExisteException 
+     * @throws SQLException 
+     * @throws BeanException 
+     * @throws CerrarRecursoException 
+     */
+    public void insertarme() throws MapeoClaseNoExisteException, SQLException, BeanException, CerrarRecursoException {
+        
+    	//Se define el TablaMapeo de dicho bean a partir del mapeo
+    	cargarTabla();
     	
         Connection con = null;
         PreparedStatement pstm = null;
-        
-        //Se toma la Tabla de dicho bean a partir del mapeo
-        //Tabla tabla = this.mapeoRaiz.getTablaPorNombreClase(this.getClass().getName());        
-        
-        //Se toma la cantidad de campos
+         
+        //Se obtiene la cantidad de campos
         int cantidadCampos = tablaMapeo.getCampos().size();
+        //Se obtiene el nombre de la tabla
         String tablaNombre = tablaMapeo.getNombre();        
         
-        //Se crea el insert a partir de nombre de la tabla y de listar todos
-        //sus campo
+        //Se crea el insert a partir de nombre de la tabla y de listar todos sus  campos
         String insercion = "";
         insercion += "INSERT INTO " + tablaNombre + " ";
         insercion += " (" + listaCamposParaQuery(tablaMapeo) + ") ";
@@ -59,13 +63,8 @@ public class NavajaDAO {
         }
         insercion += ") "; 
 
-        try {
-			con = NavajaConector.getInstance().getDataSource().getConnection();
-	        pstm = con.prepareStatement(insercion);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		con = NavajaConector.getInstance().getDataSource().getConnection();
+	    pstm = con.prepareStatement(insercion);
 
         //Se toma los atributos del bean
         ArrayList<String> atributos = UtilitarioBean.listarAtts(this.getClass());        
@@ -79,36 +78,18 @@ public class NavajaDAO {
             //Por cada campo se toma un atributo
             String att = atributos.get(i-1);
             //Se setea el valor de dicho atributo al sentencia insert
-            try {
-				pstm.setObject(j, UtilitarioBean.invocarGetter(this, att));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			pstm.setObject(j, UtilitarioBean.invocarGetter(this, att));
         }
         
 
-        System.out.println("\nLa Insercion " + insercion + ") ");
+        System.out.println("\nInsercion: " + insercion + ") ");
 
-        System.out.println("Por ejecutar " + pstm.toString());
+        System.out.println("Se ejecutara: " + pstm.toString());
 
-        try {
-			System.out.println("Cambios por la ejecucion: " + pstm.executeUpdate());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println("Cambios por la ejecucion: " + pstm.executeUpdate());
 
-        try {
-			cerrarRecurso(con);
-			cerrarRecurso(pstm);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}        
+		NavajaConector.cerrarRecurso(con);
+		NavajaConector.cerrarRecurso(pstm);
     }
     
     /**
@@ -133,30 +114,5 @@ public class NavajaDAO {
 
         return rta;
     }    
-    
-    //PARA CERRAR RECURSOS
-    protected void cerrarRecurso(Connection conn) throws SQLException {
-        if (null != conn) {
-                conn.close();
-        }
-    }
 
-    protected void cerrarRecurso(Statement stm) throws SQLException {
-        if (null != stm) {
-                stm.close();
-        }
-    }
-
-    protected void cerrarRecurso(ResultSet rs) throws SQLException {
-        if (null != rs) {
-                rs.close();
-        }
-    }
-
-    protected void cerrarRecursos(Connection conn, Statement stm, ResultSet rs)
-            throws SQLException {
-        this.cerrarRecurso(rs);
-        this.cerrarRecurso(stm);
-        this.cerrarRecurso(conn);
-    }
 }
