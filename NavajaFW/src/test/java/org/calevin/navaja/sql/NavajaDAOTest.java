@@ -1,5 +1,7 @@
 package org.calevin.navaja.sql;
 
+import static org.junit.Assert.*;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,7 +13,10 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.calevin.navaja.bean.NavajaBean;
+import org.calevin.navaja.excepciones.bean.BeanException;
+import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
 import org.calevin.navaja.excepciones.mapeo.MapeoException;
+import org.calevin.navaja.excepciones.sql.CerrarRecursoException;
 import org.calevin.navaja.mapeo.Mapeador;
 import org.calevin.navaja.utiltest.ConstantesParaTests;
 import org.junit.AfterClass;
@@ -19,7 +24,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class NavajaDAOTest {
-	private static String QUERY_LIMPIAR_MOCK_TABLA = "delete from mock_tabla"; 
+	
+	private static String INSERT_VALOR_VARCHAR= "insertarmeTest";	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
 
@@ -31,18 +38,16 @@ public class NavajaDAOTest {
         NavajaConector.getInstance().setDataSource(proveerDataSource());		
 	}
 
-	//TODO precisar el limpiado de la tabla
 	@AfterClass
-	static public void tearDownClass() throws SQLException {
+	static public void tearDownClass() throws SQLException, CerrarRecursoException {
 		Connection con = proveerDataSource().getConnection();
-	    PreparedStatement pstm = con.prepareStatement(QUERY_LIMPIAR_MOCK_TABLA);	
+	    PreparedStatement pstm = con.prepareStatement(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);	
 	    pstm.executeUpdate();			
 
-	    con.close();
-	    pstm.close();
-
 		Mapeador.limpiarMapeo();
-		NavajaConector.getInstance().setMapeoRaiz(null);			    
+		NavajaConector.getInstance().setMapeoRaiz(null);
+		NavajaConector.cerrarRecurso(con);
+		NavajaConector.cerrarRecurso(pstm);
 	}
 	
 	//TODO agregar el tearDown y el setUp
@@ -50,9 +55,19 @@ public class NavajaDAOTest {
 	//TODO agregar la comprobacion
 	@Test
 	public void insertarmeTest(){
-		MockClase mockAinsertar = new MockClase("insertarmeTest", 1);
+		MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1);
 		
-		mockAinsertar.insertarme();
+		try {
+			mockAinsertar.insertarme();
+		} catch (MapeoClaseNoExisteException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (SQLException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (BeanException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (CerrarRecursoException e) {
+			fail("Excepcion inesperada " + e);
+		}
 	}
 	
 	//inner class para test
@@ -85,6 +100,7 @@ public class NavajaDAOTest {
 		}
 	}
 
+	//METODO UTILITARIO
 	private static DataSource proveerDataSource() {
         DataSource dataSource = null;
         Properties propertiesBDD = new Properties();
