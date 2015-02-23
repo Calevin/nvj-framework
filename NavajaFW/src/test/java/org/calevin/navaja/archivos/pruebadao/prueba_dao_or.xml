@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <raiz-mapeo>
-        <tabla nombre="mock_tabla" clase="org.calevin.navaja.sql.NavajaDAOTest$MockClase">
+        <tabla nombre="mock_tabla_prueba_dao" clase="org.calevin.navaja.sql.NavajaDAOTest$MockClase">
             <primary-key>
                 <campo nombre="atributo_int" />
             </primary-key>
 
-            <campo nombre="atributo_int" nombre-como-atributo="atributoInteger" tipo="INTEGER"/>
             <campo nombre="atributo_varchar" nombre-como-atributo="atributoString" tipo="VARCHAR"/>
+            <campo nombre="atributo_int" nombre-como-atributo="atributoInteger" tipo="INTEGER"/>
+            <campo nombre="segundo_atributo_int" nombre-como-atributo="segundoAtributoInteger" tipo="INTEGER"/>
+            <campo nombre="tercer_atributo_int" nombre-como-atributo="tercerAtributoInteger" tipo="INTEGER"/>
+            <campo nombre="cuarto_atributo_int" nombre-como-atributo="cuartoAtributoInteger" tipo="INTEGER"/>
         </tabla>
 
 </raiz-mapeo>

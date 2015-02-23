@@ -25,8 +25,8 @@ import org.junit.Test;
 
 public class NavajaDAOTest {
 	
-	private static String INSERT_VALOR_VARCHAR= "insertarmeTest";	
-	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
+	private static String INSERT_VALOR_VARCHAR= "insertTest";	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
 
@@ -55,7 +55,7 @@ public class NavajaDAOTest {
 	//TODO agregar la comprobacion
 	@Test
 	public void insertarmeTest(){
-		MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1);
+		MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
 		
 		try {
 			mockAinsertar.insertarme();
@@ -74,13 +74,22 @@ public class NavajaDAOTest {
 	public class MockClase  extends NavajaDAO implements NavajaBean {
 		private String atributoString;
 		private Integer atributoInteger;
-
+		private Integer segundoAtributoInteger;
+		private Integer tercerAtributoInteger;
+		private Integer cuartoAtributoInteger;		
+		
 		public MockClase() {
 		}
 
-		public MockClase(String atributoString, Integer atributoInteger) {
+		public MockClase(String atributoString, Integer atributoInteger,
+				Integer segundoAtributoInteger, Integer tercerAtributoInteger,
+				Integer cuartoAtributoInteger) {
+			super();
 			this.atributoString = atributoString;
 			this.atributoInteger = atributoInteger;
+			this.segundoAtributoInteger = segundoAtributoInteger;
+			this.tercerAtributoInteger = tercerAtributoInteger;
+			this.cuartoAtributoInteger = cuartoAtributoInteger;
 		}
 
 		public String getAtributoString() {
@@ -97,6 +106,30 @@ public class NavajaDAOTest {
 		
 		public void setAtributoInteger(Integer atributoInteger) {
 			this.atributoInteger = atributoInteger;
+		}
+
+		public Integer getSegundoAtributoInteger() {
+			return segundoAtributoInteger;
+		}
+
+		public void setSegundoAtributoInteger(Integer segundoAtributoInteger) {
+			this.segundoAtributoInteger = segundoAtributoInteger;
+		}
+
+		public Integer getTercerAtributoInteger() {
+			return tercerAtributoInteger;
+		}
+
+		public void setTercerAtributoInteger(Integer tercerAtributoInteger) {
+			this.tercerAtributoInteger = tercerAtributoInteger;
+		}
+
+		public Integer getCuartoAtributoInteger() {
+			return cuartoAtributoInteger;
+		}
+
+		public void setCuartoAtributoInteger(Integer cuartoAtributoInteger) {
+			this.cuartoAtributoInteger = cuartoAtributoInteger;
 		}
 	}
 

@@ -52,36 +52,41 @@ public class NavajaDAO {
         
         //Se crea el insert a partir de nombre de la tabla y de listar todos sus  campos
         String insercion = "";
-        insercion += "INSERT INTO " + tablaNombre + " ";
-        insercion += " (" + listaCamposParaQuery(tablaMapeo) + ") ";
-        insercion += "VALUES (";
-        for (int i = 0; i < cantidadCampos; i++) {
-            insercion = insercion + "?";
-            if (i + 1 < cantidadCampos) {
-                insercion += ", ";
-            }
-        }
-        insercion += ") "; 
 
+        String insercionInsertInto = "INSERT INTO " + tablaNombre;
+        String insercionColumnas = " (";
+        String insercionValues = "VALUES (";
+        //Se obtiene los campos de la tabla
+        ArrayList<String> campos = listaCamposParaQuery();
+        //El insert tiene la forma:
+        //INSERT INTO nombre_tabla
+        //(columna1, columna2,columna3)
+        //VALUES (?, ?, ?)
+        for (int i = 0; i < cantidadCampos; i++) {
+        	//Despues del primer item se ingresa una coma antes de cada nuevo item
+            if (i != 0){
+            	insercionColumnas += ", ";
+            	insercionValues += ", ";
+            }
+            insercionColumnas += campos.get(i);
+       		insercionValues += "?";
+        }
+        insercionColumnas += ") ";
+        insercionValues += ") ";
+        //Se completa el INSERT con todas las partes de la query
+        insercion = insercionInsertInto + insercionColumnas + insercionValues;
+        
 		con = NavajaConector.getInstance().getDataSource().getConnection();
 	    pstm = con.prepareStatement(insercion);
-
-        //Se toma los atributos del bean
-        ArrayList<String> atributos = UtilitarioBean.listarAtts(this.getClass());        
-
-        // TODO revisar recorrido
-        
-        //Se recorre la cantidad de campos
-        //Los campos listados se reciben del ultimo al primero
-        //Por lo cual se toman de forma inversa
-        for (int i = cantidadCampos, j = 1; i > 0; i--, j++) {
-            //Por cada campo se toma un atributo
-            String att = atributos.get(i-1);
-            //Se setea el valor de dicho atributo al sentencia insert
-			pstm.setObject(j, UtilitarioBean.invocarGetter(this, att));
-        }
-        
-
+	    //Se setean los parametros obtienendo los atributos de la instancia
+	    for (int i = 0; i < cantidadCampos; i++) {
+	    	//a partir del campo se obtiene el valor de dicho atributo
+	    	String campo = campos.get(i);
+	    	String atributo = tablaMapeo.getCampoMapeoPorNombre(campo).getNombreComoAtributo();
+	    	//Los parametros del PrepareStatement se inician en 1 por eso se usa i+1
+	    	pstm.setObject(i+1, UtilitarioBean.invocarGetter(this, atributo));	
+	    }
+	    
         System.out.println("\nInsercion: " + insercion + ") ");
 
         System.out.println("Se ejecutara: " + pstm.toString());
@@ -91,28 +96,24 @@ public class NavajaDAO {
 		NavajaConector.cerrarRecurso(con);
 		NavajaConector.cerrarRecurso(pstm);
     }
-    
+
     /**
      * Lista todos los campos de una tabla
      *
      * @param tabla tabla de la cual listara los campos
-     * @return un String con los campos de la tabla separados por coma
+     * @return un ArrayList<String> con los campos de la tabla
      */
-    //TODO revisar la iteracion
-    public String listaCamposParaQuery(TablaMapeo tabla) {
-        String rta = "";
-        int cantidadCampos = tabla.getCampos().size();
+    public ArrayList<String> listaCamposParaQuery() {
+    	ArrayList<String> campos = new ArrayList<String>();
 
-        for (int i = cantidadCampos; i > 0; i--) {
-            CampoMapeo campo = tabla.getCampos().get(i - 1);
-            rta += campo.getNombre();
-            //SI AUN QUEDAN CAMPOS LE AGREGO UNA COMA
-            if (i - 2 >= 0) {
-                rta += ", ";
-            }
+        int cantidadCampos = tablaMapeo.getCampos().size();
+        
+        for (int i = 0; i < cantidadCampos; i++) {
+            CampoMapeo campo = tablaMapeo.getCampos().get(i);
+            campos.add(campo.getNombre());
         }
 
-        return rta;
+        return campos;
     }    
 
 }
