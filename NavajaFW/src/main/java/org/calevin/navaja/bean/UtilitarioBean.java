@@ -44,7 +44,12 @@ public class UtilitarioBean {
 
             for (Method metodo : metodos) {
             	nombreMetodo = metodo.getName();
-            	
+            	//TODO existe un bug:
+            	// Este algoritmo tomara como iguales nombres como:
+            	// getAtributoInteger
+            	// getSegundoAtributoInteger
+            	// ya que ambos empiezan con "get" y terminan con "AtributoInteger"
+            	// CORREGIR!
                 //Si el nombre del metodo termina con el nombre de atributo y empieza con get
                 if (nombreMetodo.endsWith(NavajaStringUtil.conmutarCaseChar(atributo, 0)) 
                 		&& (nombreMetodo.startsWith(NavajaConstantes.GET))) {
