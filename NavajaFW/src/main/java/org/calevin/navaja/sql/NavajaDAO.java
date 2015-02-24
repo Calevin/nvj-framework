@@ -16,15 +16,19 @@ public class NavajaDAO {
 
     protected TablaMapeo tablaMapeo = null;
    
-    public NavajaDAO() {
+    public NavajaDAO() throws MapeoClaseNoExisteException {
     	super();
+    	//Se carga la tabla al crear la instancia
+    	//sera utilizada posteriorme, y es necesaria para el metodo equals
+    	//MapeoClaseNoExisteException solo puede ser lanzada en este momento
+    	cargarTablaMapeo();
     }
     
     /**
      * Define el atributo tablaMapeo de la clase a partir del nombre de la misma, obteniendolo del mapeo general desde NavajaConector.
      * @throws MapeoClaseNoExisteException
      */
-    private void cargarTabla() throws MapeoClaseNoExisteException{
+    private void cargarTablaMapeo() throws MapeoClaseNoExisteException{
     	if (this.tablaMapeo == null){
     		this.tablaMapeo = NavajaConector.getInstance().getRaizMapeo().getTablaPorNombreClase(this.getClass().getName());    		
     	}
@@ -32,16 +36,12 @@ public class NavajaDAO {
     
     /**
      * inserta en la base de datos los valores actuales del objeto.
-     * @throws MapeoClaseNoExisteException 
      * @throws SQLException 
      * @throws BeanException 
      * @throws CerrarRecursoException 
      */
-    public void insertarme() throws MapeoClaseNoExisteException, SQLException, BeanException, CerrarRecursoException {
+    public void insertarme() throws SQLException, BeanException, CerrarRecursoException {
         
-    	//Se define el TablaMapeo de dicho bean a partir del mapeo
-    	cargarTabla();
-    	
         Connection con = null;
         PreparedStatement pstm = null;
          
@@ -115,5 +115,31 @@ public class NavajaDAO {
 
         return campos;
     }    
+    
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((tablaMapeo == null) ? 0 : tablaMapeo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NavajaDAO other = (NavajaDAO) obj;
+		if (tablaMapeo == null) {
+			if (other.tablaMapeo != null)
+				return false;
+		} else if (!tablaMapeo.equals(other.tablaMapeo))
+			return false;
+		return true;
+	}
 
 }
