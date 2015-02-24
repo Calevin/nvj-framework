@@ -33,74 +33,51 @@ public class NavajaConector {
     protected NavajaConector() {
     }
 
-    //TODO crear metodo para realizar querys
-    
-    /**
-     * 
-     */
-    public static int ejecutarUpdate(String query){
+	/**
+	 * Se ejecuta la query recibida por parametro 
+     * @param query
+     * 			consulta a ejecutar
+	 * @return retora el numero de rows afectadas por la query, 0 en caso de no afectar registros
+     * @throws SQLException
+     * @throws CerrarRecursoException 
+	 */
+    public static int ejecutarUpdate(String query) throws SQLException, CerrarRecursoException {
     	int rta = -1;
         Connection con = null;
         PreparedStatement pstm = null;
 
-        try {
         con = NavajaConector.getInstance().getDataSource().getConnection();
         pstm = con.prepareStatement(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-        try {
-        System.out.println("Por ejecutar " + pstm.toString());	
         rta = pstm.executeUpdate();
-        System.out.println("Cambios DML por la ejecucion: " + rta);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        try {
-			cerrarRecurso(con);
-			cerrarRecurso(pstm);
-		} catch (CerrarRecursoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+
+		cerrarRecurso(con);
+		cerrarRecurso(pstm);
+
     	return rta;
     }
     
-    public static ResultSet ejecutarQuery(String query){
+    /**
+     * Se ejecuta la query recibida por parametro 
+     * @param query
+     * 			consulta a ejecutar
+     * @return un ResultSet que contiene el resultado de la query; nunca null
+     * @throws SQLException
+     * @throws CerrarRecursoException
+     */
+    public static ResultSet ejecutarQuery(String query) throws SQLException, CerrarRecursoException {
     	ResultSet rta = null;
         Connection con = null;
         PreparedStatement pstm = null;
 
-        try {
         con = NavajaConector.getInstance().getDataSource().getConnection();
         pstm = con.prepareStatement(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-        try {
-        System.out.println("Por ejecutar " + pstm.toString());	
         rta = pstm.executeQuery();
-        System.out.println("Registros obtenidos: " + rta.getFetchSize());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        try {
-			cerrarRecurso(con);
-			cerrarRecurso(pstm);
-		} catch (CerrarRecursoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+
+		cerrarRecurso(con);
+		cerrarRecurso(pstm);
+
     	return rta;
     }    
     
