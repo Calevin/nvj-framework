@@ -28,7 +28,11 @@ import org.junit.Test;
 public class NavajaDAOTest {
 	
 	private static String INSERT_VALOR_VARCHAR= "insertTest";	
+	private static String INSERT_VALOR_VARCHAR_TEST_BORRARME= "insertPk";
+	private static int INSERT_VALOR_INT_TEST_BORRARME= 111;
 	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
+	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE = "delete from mock_tabla_prueba_dao" 
+			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME;	
 	private static String QUERY_COMPROBACION_INSERT_VALOR_VARCHAR = "select * from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";	
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
@@ -44,7 +48,8 @@ public class NavajaDAOTest {
 	@AfterClass
 	static public void tearDownClass() throws SQLException, CerrarRecursoException {
 		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);
-
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE);
+				
 		Mapeador.limpiarMapeo();
 		NavajaConector.getInstance().setMapeoRaiz(null);
 	}
@@ -71,6 +76,26 @@ public class NavajaDAOTest {
 				fail("No se encontraron registros para comprobar el insert");
 			}
 
+		} catch (MapeoClaseNoExisteException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (SQLException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (BeanException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (CerrarRecursoException e) {
+			fail("Excepcion inesperada " + e);
+		}
+	}
+	
+	//TODO Insertar con querys, agregar comprobacion
+	@Test
+	public void borrarmeTest(){
+		try {
+		MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, INSERT_VALOR_INT_TEST_BORRARME, 1, 2, null);
+
+		mockAinsertar.insertarme();
+		
+		mockAinsertar.borrarme();
 		} catch (MapeoClaseNoExisteException e) {
 			fail("Excepcion inesperada " + e);
 		} catch (SQLException e) {
