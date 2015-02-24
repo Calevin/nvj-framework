@@ -44,15 +44,10 @@ public class UtilitarioBean {
 
             for (Method metodo : metodos) {
             	nombreMetodo = metodo.getName();
-            	//TODO existe un bug:
-            	// Este algoritmo tomara como iguales nombres como:
-            	// getAtributoInteger
-            	// getSegundoAtributoInteger
-            	// ya que ambos empiezan con "get" y terminan con "AtributoInteger"
-            	// CORREGIR!
                 //Si el nombre del metodo termina con el nombre de atributo y empieza con get
-                if (nombreMetodo.endsWith(NavajaStringUtil.conmutarCaseChar(atributo, 0)) 
-                		&& (nombreMetodo.startsWith(NavajaConstantes.GET))) {
+            	String nombreAtributo = NavajaStringUtil.conmutarCaseChar(atributo, 0);
+            	if (nombreAtributo.equals(nombreMetodo.substring(3))
+            			&& (nombreMetodo.startsWith(NavajaConstantes.GET))) {
                     //Se invoca a dicho getter y se guarda el resultado retornado
                     rta = metodo.invoke(instancia);
                 }
@@ -103,8 +98,9 @@ public class UtilitarioBean {
 
                 //Si el final del nombre del metodo termina con el atributo 
                 //enviado y empieza con set es el setter correspondiente
-                if (nombreMetodo.endsWith(NavajaStringUtil.conmutarCaseChar(atributo, 0)) 
-                		&& (nombreMetodo.startsWith(NavajaConstantes.SET))) {
+                String nombreAtributo = NavajaStringUtil.conmutarCaseChar(atributo, 0);
+            	if (nombreAtributo.equals(nombreMetodo.substring(3))
+            			&& (nombreMetodo.startsWith(NavajaConstantes.SET))) {
                 	//TODO INVOCAR CASTEAR EL VALOR SEGUN LO DEFINIDO
                     //ESTOY RECIBIENDO UN LONG DEL RESULSET Y DEBERIA SER INTEGER
                     
