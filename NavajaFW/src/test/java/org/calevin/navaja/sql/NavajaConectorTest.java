@@ -48,14 +48,14 @@ public class NavajaConectorTest {
 	//TESTs
 	@Test
 	public void ejecutarQueryReturnResultSetCasoCorrectoTest(){
+		try {
 		ResultSet rs = NavajaConector.ejecutarQuery(QUERY_SELECT_DATABASE);
 		
-		try {
-			rs.next();
+		rs.next();
 			
-			Assert.assertTrue(DATABASE_NOMBRE.equals((String)rs.getObject(COLUMNA_CONSULTA_DATABASE)));
+		Assert.assertTrue(DATABASE_NOMBRE.equals((String)rs.getObject(COLUMNA_CONSULTA_DATABASE)));
 
-			NavajaConector.cerrarRecurso(rs);
+		NavajaConector.cerrarRecurso(rs);
 		} catch (SQLException e) {
 			fail("Exception! " + e);
 		} catch (CerrarRecursoException e) {
@@ -65,10 +65,16 @@ public class NavajaConectorTest {
 	
 	@Test
 	public void ejecutarQueryReturnIntCasoCorrectoTest(){
+		try {		
 		int rowsModificados = NavajaConector.ejecutarUpdate(QUERY_CREATE_TABLE);
 		Assert.assertTrue(0 == rowsModificados);
 		rowsModificados = NavajaConector.ejecutarUpdate(QUERY_INSERT_TEST_CREATE_TABLA);
 		Assert.assertTrue(1 == rowsModificados);
+		} catch (SQLException e) {
+			fail("Exception! " + e);
+		} catch (CerrarRecursoException e) {
+			fail("Exception! " + e);
+		}		
 	}
 	
 	//METODOS UTILITARIOS:
