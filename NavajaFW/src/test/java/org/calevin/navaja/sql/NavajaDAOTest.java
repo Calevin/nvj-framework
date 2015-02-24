@@ -4,12 +4,13 @@ import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
+
+import junit.framework.Assert;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.calevin.navaja.bean.NavajaBean;
@@ -23,10 +24,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class NavajaDAOTest {
 	
 	private static String INSERT_VALOR_VARCHAR= "insertTest";	
 	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
+	private static String QUERY_COMPROBACION_INSERT_VALOR_VARCHAR = "select * from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";	
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
 
@@ -40,25 +43,34 @@ public class NavajaDAOTest {
 
 	@AfterClass
 	static public void tearDownClass() throws SQLException, CerrarRecursoException {
-		Connection con = proveerDataSource().getConnection();
-	    PreparedStatement pstm = con.prepareStatement(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);	
-	    pstm.executeUpdate();			
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);
 
 		Mapeador.limpiarMapeo();
 		NavajaConector.getInstance().setMapeoRaiz(null);
-		NavajaConector.cerrarRecurso(con);
-		NavajaConector.cerrarRecurso(pstm);
 	}
-	
-	//TODO agregar el tearDown y el setUp
-	
-	//TODO agregar la comprobacion
+
 	@Test
 	public void insertarmeTest(){
-		MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
-		
 		try {
+			MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
+
 			mockAinsertar.insertarme();
+
+			ResultSet resultComprobacion = NavajaConector.ejecutarQuery(QUERY_COMPROBACION_INSERT_VALOR_VARCHAR);
+			if(resultComprobacion.next()){
+				//MockClase mockParaComprobacion = new MockClase();
+				MockClase mockParaComprobacion = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
+				mockParaComprobacion.setAtributoString(resultComprobacion.getString("atributo_varchar"));
+				mockParaComprobacion.setAtributoInteger(resultComprobacion.getInt("atributo_int"));  
+				mockParaComprobacion.setSegundoAtributoInteger(resultComprobacion.getInt("segundo_atributo_int")); 
+				mockParaComprobacion.setTercerAtributoInteger(resultComprobacion.getInt("tercer_atributo_int")); 
+				mockParaComprobacion.setCuartoAtributoInteger(resultComprobacion.getInt("cuarto_atributo_int")); 
+				
+				Assert.assertTrue(mockAinsertar.equals(mockParaComprobacion));
+				} else {
+				fail("No se encontraron registros para comprobar el insert");
+			}
+
 		} catch (MapeoClaseNoExisteException e) {
 			fail("Excepcion inesperada " + e);
 		} catch (SQLException e) {
@@ -78,12 +90,13 @@ public class NavajaDAOTest {
 		private Integer tercerAtributoInteger;
 		private Integer cuartoAtributoInteger;		
 		
-		public MockClase() {
+		public MockClase() throws MapeoClaseNoExisteException {
+			super();
 		}
 
 		public MockClase(String atributoString, Integer atributoInteger,
 				Integer segundoAtributoInteger, Integer tercerAtributoInteger,
-				Integer cuartoAtributoInteger) {
+				Integer cuartoAtributoInteger) throws MapeoClaseNoExisteException {
 			super();
 			this.atributoString = atributoString;
 			this.atributoInteger = atributoInteger;
@@ -130,6 +143,53 @@ public class NavajaDAOTest {
 
 		public void setCuartoAtributoInteger(Integer cuartoAtributoInteger) {
 			this.cuartoAtributoInteger = cuartoAtributoInteger;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			//TablaMapeo puede no estar instanciado y por lo tanto no seran iguales
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MockClase other = (MockClase) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (atributoInteger == null) {
+				if (other.atributoInteger != null)
+					return false;
+			} else if (!atributoInteger.equals(other.atributoInteger))
+				return false;
+			if (atributoString == null) {
+				if (other.atributoString != null)
+					return false;
+			} else if (!atributoString.equals(other.atributoString))
+				return false;
+			if (cuartoAtributoInteger == null) {
+				if (other.cuartoAtributoInteger != null)
+					return false;
+			} else if (!cuartoAtributoInteger
+					.equals(other.cuartoAtributoInteger))
+				return false;
+			if (segundoAtributoInteger == null) {
+				if (other.segundoAtributoInteger != null)
+					return false;
+			} else if (!segundoAtributoInteger
+					.equals(other.segundoAtributoInteger))
+				return false;
+			if (tercerAtributoInteger == null) {
+				if (other.tercerAtributoInteger != null)
+					return false;
+			} else if (!tercerAtributoInteger
+					.equals(other.tercerAtributoInteger))
+				return false;
+			return true;
+		}
+
+		private NavajaDAOTest getOuterType() {
+			return NavajaDAOTest.this;
 		}
 	}
 
