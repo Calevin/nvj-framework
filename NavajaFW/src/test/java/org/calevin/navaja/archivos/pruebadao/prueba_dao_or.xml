@@ -3,6 +3,7 @@
         <tabla nombre="mock_tabla_prueba_dao" clase="org.calevin.navaja.sql.NavajaDAOTest$MockClase">
             <primary-key>
                 <campo nombre="atributo_int" />
+                <campo nombre="atributo_varchar" />
             </primary-key>
 
             <campo nombre="atributo_varchar" nombre-como-atributo="atributoString" tipo="VARCHAR"/>
