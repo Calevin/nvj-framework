@@ -35,7 +35,7 @@ public class NavajaDAO {
     }
     
     /**
-     * inserta en la base de datos los valores actuales del objeto.
+     * Inserta en la base de datos un registro identico a dicha instancia.
      * @throws SQLException 
      * @throws BeanException 
      * @throws CerrarRecursoException 
@@ -98,10 +98,66 @@ public class NavajaDAO {
     }
 
     /**
+     * Borra de la base de datos el registro correspondiente con la pk de la instancia.
+     * @throws SQLException 
+     * @throws BeanException 
+     * @throws CerrarRecursoException 
+     */
+    public void borrarme() throws SQLException, BeanException, CerrarRecursoException {
+        
+        Connection con = null;
+        PreparedStatement pstm = null;
+        
+    	String delete = "";
+        //Se obtiene el nombre de la tabla
+        String tablaNombre = tablaMapeo.getNombre();
+        
+        //Se obtiene la cantidad de campos de la pk
+        int cantidadCamposPk = tablaMapeo.getPrimaryKeyMapeo().getCampos().size();
+        
+    	String deleteFrom = "DELETE FROM " + tablaNombre + " ";
+    	String deleteWherePk = "WHERE ";
+        //Se obtiene los campos de la pk de la tabla
+        ArrayList<String> camposPk = listaCamposPkParaQuery();     	
+    	//El delete tiene la forma:
+    	//DELETE FROM nombre_tabla
+    	//WHERE columnapk1 = ?,
+    	//columnapk1 = ?
+    	//...
+        for (int i = 0; i < cantidadCamposPk; i++) {
+        	//Despues del primer item se ingresa una coma antes de cada nuevo item
+            if (i != 0){
+            	deleteWherePk += " AND ";
+            }
+            deleteWherePk  += camposPk.get(i) + " = ?";
+        }
+        delete = deleteFrom + deleteWherePk;
+
+		con = NavajaConector.getInstance().getDataSource().getConnection();
+	    pstm = con.prepareStatement(delete);
+	    //Se setean los parametros obtienendo los atributos de la instancia
+	    for (int i = 0; i < cantidadCamposPk; i++) {
+	    	//a partir del campo se obtiene el valor de dicho atributo
+	    	String campoPk = camposPk.get(i);
+	    	String atributo = tablaMapeo.getCampoMapeoPorNombre(campoPk).getNombreComoAtributo();
+	    	//Los parametros del PrepareStatement se inician en 1 por eso se usa i+1
+	    	pstm.setObject(i+1, UtilitarioBean.invocarGetter(this, atributo));	
+	    }        
+	    
+	    
+        System.out.println("\nDelete: " + delete + " ");
+
+        System.out.println("Se ejecutara: " + pstm.toString());
+
+		System.out.println("Cambios por la ejecucion: " + pstm.executeUpdate());
+
+		NavajaConector.cerrarRecurso(con);
+		NavajaConector.cerrarRecurso(pstm);	    
+    }
+    
+    /**
      * Lista todos los campos de una tabla
-     *
-     * @param tabla tabla de la cual listara los campos
-     * @return un ArrayList<String> con los campos de la tabla
+     * @return campos un ArrayList<String> con los campos de la tabla
      */
     public ArrayList<String> listaCamposParaQuery() {
     	ArrayList<String> campos = new ArrayList<String>();
@@ -115,6 +171,23 @@ public class NavajaDAO {
 
         return campos;
     }    
+    
+    /**
+     * Lista todos los campos de la pk de una tabla
+     * @return campos un ArrayList<String> con los campos de la pk de la tabla
+     */
+    public ArrayList<String> listaCamposPkParaQuery() {
+    	ArrayList<String> camposPk = new ArrayList<String>();
+    	
+        int cantidadCampos = tablaMapeo.getPrimaryKeyMapeo().getCampos().size();
+
+        for (int i = 0; i < cantidadCampos; i++) {
+        	CampoMapeo campoPk = tablaMapeo.getPrimaryKeyMapeo().getCampos().get(i);
+        	camposPk.add(campoPk.getNombre());
+        }
+        
+    	return camposPk;
+    }
     
     @Override
 	public int hashCode() {
