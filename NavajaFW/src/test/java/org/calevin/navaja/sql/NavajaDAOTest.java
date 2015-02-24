@@ -54,8 +54,9 @@ public class NavajaDAOTest {
 		NavajaConector.getInstance().setMapeoRaiz(null);
 	}
 
+	//TODO agregar casos negativos/comprobar excepciones
 	@Test
-	public void insertarmeTest(){
+	public void insertarmeTestCasoCorrecto(){
 		try {
 			MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
 
@@ -63,7 +64,6 @@ public class NavajaDAOTest {
 
 			ResultSet resultComprobacion = NavajaConector.ejecutarQuery(QUERY_COMPROBACION_INSERT_VALOR_VARCHAR);
 			if(resultComprobacion.next()){
-				//MockClase mockParaComprobacion = new MockClase();
 				MockClase mockParaComprobacion = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
 				mockParaComprobacion.setAtributoString(resultComprobacion.getString("atributo_varchar"));
 				mockParaComprobacion.setAtributoInteger(resultComprobacion.getInt("atributo_int"));  
@@ -86,16 +86,35 @@ public class NavajaDAOTest {
 			fail("Excepcion inesperada " + e);
 		}
 	}
-	
-	//TODO Insertar con querys, agregar comprobacion
-	@Test
-	public void borrarmeTest(){
-		try {
-		MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, INSERT_VALOR_INT_TEST_BORRARME, 1, 2, null);
 
-		mockAinsertar.insertarme();
+	@Test
+	public void borrarmeTestCasoCorrecto(){
+		try {
+		String insert = "INSERT INTO mock_tabla_prueba_dao (atributo_varchar, atributo_int) VALUES ('"
+				+ INSERT_VALOR_VARCHAR_TEST_BORRARME + "', " + INSERT_VALOR_INT_TEST_BORRARME +")";
 		
-		mockAinsertar.borrarme();
+		NavajaConector.ejecutarUpdate(insert);
+		String consulta = "SELECT * FROM mock_tabla_prueba_dao WHERE " 
+				+  "atributo_varchar='"+ INSERT_VALOR_VARCHAR_TEST_BORRARME + "' AND "
+				+ "atributo_int="+ INSERT_VALOR_INT_TEST_BORRARME;
+
+		ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
+		if (rsConsulta.next()){
+			Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals(INSERT_VALOR_VARCHAR_TEST_BORRARME));
+			Assert.assertTrue(rsConsulta.getInt("atributo_int") == INSERT_VALOR_INT_TEST_BORRARME);
+		} else {
+			fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
+		}
+		
+		MockClase mockAborrar = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, INSERT_VALOR_INT_TEST_BORRARME, null, null, null);
+
+		mockAborrar.borrarme();
+		
+		rsConsulta = NavajaConector.ejecutarQuery(consulta);
+		if (rsConsulta.next()){
+			fail("Se encontro registro en la consulta de borrarmeTest despues del borrado");
+		}
+		
 		} catch (MapeoClaseNoExisteException e) {
 			fail("Excepcion inesperada " + e);
 		} catch (SQLException e) {
