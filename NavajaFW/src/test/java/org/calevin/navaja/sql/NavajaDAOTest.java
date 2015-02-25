@@ -125,6 +125,33 @@ public class NavajaDAOTest {
 			fail("Excepcion inesperada " + e);
 		}
 	}
+
+	@Test
+	public void isPkValidaCasoReturnTrue(){
+		try {
+			MockClase mockConPkValida = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, INSERT_VALOR_INT_TEST_BORRARME, 1, 2, 3);
+			Assert.assertTrue(mockConPkValida.isPkValida());
+		} catch (MapeoClaseNoExisteException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (BeanException e) {
+			fail("Excepcion inesperada " + e);
+		}
+	}
+	
+	@Test
+	public void isPkValidaCasoReturnFalse(){
+		try {
+			MockClase mockConPkValida = new MockClase(null, INSERT_VALOR_INT_TEST_BORRARME, 1, 2, 3);
+			Assert.assertFalse(mockConPkValida.isPkValida());
+			mockConPkValida = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, null, 1, 2, 3);
+			Assert.assertFalse(mockConPkValida.isPkValida());
+
+		} catch (MapeoClaseNoExisteException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (BeanException e) {
+			fail("Excepcion inesperada " + e);
+		}
+	}
 	
 	//inner class para test
 	public class MockClase  extends NavajaDAO implements NavajaBean {
