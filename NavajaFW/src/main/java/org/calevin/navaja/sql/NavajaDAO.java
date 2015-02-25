@@ -156,17 +156,43 @@ public class NavajaDAO {
     }
     
     /**
+     * Retorna si la PK de la instancia es valida, falsa o nula. 
+     * @return true si la pk es valida, false si la pk no es valida, null si no se encontro la PK.
+     * @throws BeanException
+     */
+    public Boolean isPkValida() throws BeanException{
+    	Boolean rta = null;
+    	
+    	ArrayList<String> camposPk = listaCamposPkParaQuery(); 
+    	int i = 0;
+    	do {
+	    	//a partir del campo se obtiene el valor de dicho atributo
+	    	String campoPk = camposPk.get(i);
+	    	String atributo = tablaMapeo.getCampoMapeoPorNombre(campoPk).getNombreComoAtributo();
+	    	//Reviso el valor del atributo
+	    	rta = UtilitarioBean.invocarGetter(this, atributo) != null;
+	    	i++;
+    	} while (rta != false && i < camposPk.size());
+    	
+    	return rta;
+    }
+    
+    
+    /**
      * Lista todos los campos de una tabla
-     * @return campos un ArrayList<String> con los campos de la tabla
+     * @return campos un ArrayList<String> con los campos de la tabla, null en caso de que no tenga campos
      */
     public ArrayList<String> listaCamposParaQuery() {
-    	ArrayList<String> campos = new ArrayList<String>();
+    	ArrayList<String> campos = null;
 
         int cantidadCampos = tablaMapeo.getCampos().size();
-        
-        for (int i = 0; i < cantidadCampos; i++) {
-            CampoMapeo campo = tablaMapeo.getCampos().get(i);
-            campos.add(campo.getNombre());
+        if(cantidadCampos > 0){
+        	campos = new ArrayList<String>();
+        	
+            for (int i = 0; i < cantidadCampos; i++) {
+                CampoMapeo campo = tablaMapeo.getCampos().get(i);
+                campos.add(campo.getNombre());
+            }
         }
 
         return campos;
@@ -174,16 +200,19 @@ public class NavajaDAO {
     
     /**
      * Lista todos los campos de la pk de una tabla
-     * @return campos un ArrayList<String> con los campos de la pk de la tabla
+     * @return campos un ArrayList<String> con los campos de la pk de la tabla, null en caso de que no tenga PK
      */
     public ArrayList<String> listaCamposPkParaQuery() {
-    	ArrayList<String> camposPk = new ArrayList<String>();
+    	ArrayList<String> camposPk = null;
     	
         int cantidadCampos = tablaMapeo.getPrimaryKeyMapeo().getCampos().size();
-
-        for (int i = 0; i < cantidadCampos; i++) {
-        	CampoMapeo campoPk = tablaMapeo.getPrimaryKeyMapeo().getCampos().get(i);
-        	camposPk.add(campoPk.getNombre());
+        if(cantidadCampos > 0){
+        	camposPk = new ArrayList<String>();
+        	
+            for (int i = 0; i < cantidadCampos; i++) {
+            	CampoMapeo campoPk = tablaMapeo.getPrimaryKeyMapeo().getCampos().get(i);
+            	camposPk.add(campoPk.getNombre());
+            }        	
         }
         
     	return camposPk;
