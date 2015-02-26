@@ -18,6 +18,7 @@ import org.calevin.navaja.excepciones.bean.BeanException;
 import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
 import org.calevin.navaja.excepciones.mapeo.MapeoException;
 import org.calevin.navaja.excepciones.sql.CerrarRecursoException;
+import org.calevin.navaja.excepciones.sql.PkInvalidaException;
 import org.calevin.navaja.mapeo.Mapeador;
 import org.calevin.navaja.utiltest.ConstantesParaTests;
 import org.junit.AfterClass;
@@ -122,6 +123,8 @@ public class NavajaDAOTest {
 		} catch (BeanException e) {
 			fail("Excepcion inesperada " + e);
 		} catch (CerrarRecursoException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (PkInvalidaException e) {
 			fail("Excepcion inesperada " + e);
 		}
 	}

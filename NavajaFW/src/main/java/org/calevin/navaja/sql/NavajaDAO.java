@@ -9,6 +9,7 @@ import org.calevin.navaja.bean.UtilitarioBean;
 import org.calevin.navaja.excepciones.bean.BeanException;
 import org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException;
 import org.calevin.navaja.excepciones.sql.CerrarRecursoException;
+import org.calevin.navaja.excepciones.sql.PkInvalidaException;
 import org.calevin.navaja.mapeo.CampoMapeo;
 import org.calevin.navaja.mapeo.TablaMapeo;
 
@@ -102,8 +103,9 @@ public class NavajaDAO {
      * @throws SQLException 
      * @throws BeanException 
      * @throws CerrarRecursoException 
+     * @throws PkInvalidaException 
      */
-    public void borrarme() throws SQLException, BeanException, CerrarRecursoException {
+    public void borrarme() throws SQLException, BeanException, CerrarRecursoException, PkInvalidaException {
         
         Connection con = null;
         PreparedStatement pstm = null;
@@ -119,6 +121,16 @@ public class NavajaDAO {
     	String deleteWherePk = "WHERE ";
         //Se obtiene los campos de la pk de la tabla
         ArrayList<String> camposPk = listaCamposPkParaQuery();     	
+        //TODO revisar si esta comprobacion se puede externalizar en un metodo
+		if(camposPk == null){
+        	throw new PkInvalidaException();
+        } else {
+        	ArrayList<String> camposPkConValorNulo = getCamposPkConValorNulo();
+        	if(camposPkConValorNulo.size() > 0){
+        		throw new PkInvalidaException((String[]) camposPkConValorNulo.toArray());
+        	}
+        }
+
     	//El delete tiene la forma:
     	//DELETE FROM nombre_tabla
     	//WHERE columnapk1 = ?,
@@ -177,7 +189,29 @@ public class NavajaDAO {
     	return rta;
     }
     
-    
+    /**
+     * Retorna los nombres de los campos de la PK que tienen valor null.
+     * @return Lista con los nombres de los campos que tienen valor null.
+     * @throws BeanException
+     */
+    public ArrayList<String> getCamposPkConValorNulo() throws BeanException{
+    	ArrayList<String> camposPkNulos = new ArrayList<String>();
+    	
+    	ArrayList<String> camposPk = listaCamposPkParaQuery(); 
+    	
+    	for (int i = 0; i < camposPk.size(); i++) {
+	    	//a partir del campo se obtiene el valor de dicho atributo
+	    	String campoPk = camposPk.get(i);
+	    	String atributo = tablaMapeo.getCampoMapeoPorNombre(campoPk).getNombreComoAtributo();
+	    	//Reviso el valor del atributo
+	    	if(UtilitarioBean.invocarGetter(this, atributo) == null){
+	    		camposPkNulos.add(campoPk);
+	    	}
+		}
+    	
+    	return camposPkNulos;
+    }
+
     /**
      * Lista todos los campos de una tabla
      * @return campos un ArrayList<String> con los campos de la tabla, null en caso de que no tenga campos
