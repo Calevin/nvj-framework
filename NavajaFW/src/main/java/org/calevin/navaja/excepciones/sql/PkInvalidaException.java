@@ -2,7 +2,7 @@ package org.calevin.navaja.excepciones.sql;
 
 import org.calevin.navaja.util.NavajaConstantes;
 
-public class PkInvalidaException extends Exception{
+public class PkInvalidaException extends RuntimeException{
 
 	private static final long serialVersionUID = 6639356603139979929L;
 

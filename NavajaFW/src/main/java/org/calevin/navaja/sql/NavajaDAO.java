@@ -103,9 +103,8 @@ public class NavajaDAO {
      * @throws SQLException 
      * @throws BeanException 
      * @throws CerrarRecursoException 
-     * @throws PkInvalidaException 
      */
-    public void borrarme() throws SQLException, BeanException, CerrarRecursoException, PkInvalidaException {
+    public void borrarme() throws SQLException, BeanException, CerrarRecursoException{
         
         Connection con = null;
         PreparedStatement pstm = null;
