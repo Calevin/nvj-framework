@@ -34,12 +34,12 @@ public class NavajaConectorTest {
 	private static String COLUMNA_CONSULTA_DATABASE = "database()";
 	
 	@BeforeClass 
-	static public void setUpClass() throws MapeoException {
+	static public void setUpClass(){
         NavajaConector.getInstance().setDataSource(proveerDataSource());
 	}
 	
 	@AfterClass
-	static public void tearDownClass() throws SQLException {
+	static public void tearDownClass(){
         NavajaConector.getInstance().setDataSource(null);
         
         dropTablaTestCreate();

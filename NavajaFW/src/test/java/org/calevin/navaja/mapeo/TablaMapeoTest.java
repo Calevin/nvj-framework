@@ -22,7 +22,7 @@ public class TablaMapeoTest {
 	CampoMapeo campoSegundo = new CampoMapeo(DOS, DOSCOMOATT);
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 
 		ArrayList<CampoMapeo> campos = new ArrayList<CampoMapeo>();
 		campos.add(campoPrimero);

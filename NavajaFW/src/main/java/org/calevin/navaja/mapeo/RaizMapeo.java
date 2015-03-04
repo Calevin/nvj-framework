@@ -27,7 +27,7 @@ public class RaizMapeo {
                 //Se retorna
                 return tabla;
             } else {
-                throw new org.calevin.navaja.excepciones.mapeo.MapeoClaseNoExisteException(nombreClase);
+                throw new MapeoClaseNoExisteException(nombreClase);
             }
         }
 

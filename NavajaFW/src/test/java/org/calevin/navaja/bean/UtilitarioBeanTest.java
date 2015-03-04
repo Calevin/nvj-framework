@@ -30,7 +30,7 @@ public class UtilitarioBeanTest {
 			Arrays.asList(atributoIntegerNombre, atributoStringNombre));
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		mockClase = new MockClase(atributoStringValor, atributoIntegerValor);
 	}
 	

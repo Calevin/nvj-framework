@@ -36,7 +36,7 @@ public class CargadorRecursosNvjTest {
     private PrimaryKeyMapeo pk = null;
     
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 
 		//Tablas
 		tablaPrimera = new TablaMapeo();

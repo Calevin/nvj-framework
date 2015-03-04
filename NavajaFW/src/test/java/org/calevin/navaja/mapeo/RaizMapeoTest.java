@@ -23,7 +23,7 @@ public class RaizMapeoTest {
 	ArrayList<TablaMapeo> tablas = null;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		raizMapeo = new RaizMapeo();
 		tablaMapeoUna = new TablaMapeo();
 		tablaMapeoUna.setNombre(NOMBRETABLA); 
