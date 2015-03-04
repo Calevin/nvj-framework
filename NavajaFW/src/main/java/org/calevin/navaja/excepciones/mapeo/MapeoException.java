@@ -20,4 +20,10 @@ public class MapeoException extends SAXException {
                 + NavajaConstantes.ESPACIO 
                 + message);
     }
+
+    public MapeoException(Exception e) {
+    super(EXCEPCION_AL_MAPEAR 
+            + NavajaConstantes.PUNTO,
+            e);
+    }
 }

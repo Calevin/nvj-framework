@@ -69,17 +69,11 @@ public class Mapeador {
 					parser.parse(xmlName, new LectorSax());
 
 				} catch (ParserConfigurationException e) {
-					throw new MapeoException(e.getMessage());
-				} catch (MapeoCampoRepetidoException e) {
-					throw e;
-				} catch (MapeoTablaRepetidaException e) {
-					throw e;
-				} catch (MapeoClaseRepetidaException e) {
-					throw e;
+					throw new MapeoException(e);
 				} catch (SAXException e) {
-					throw new MapeoException(e.getMessage());
+					throw new MapeoException(e);
 				} catch (IOException e) {
-					throw new MapeoException(e.getMessage());
+					throw new MapeoException(e);
 				}
 				if (raizMapeo == null || raizMapeo.getTablas().isEmpty()) {
 					throw new MapeoException(msjErrorMapeoNoRealizado);
