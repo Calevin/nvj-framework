@@ -3,7 +3,6 @@ package org.calevin.navaja.sql;
 import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -39,7 +38,7 @@ public class NavajaDAOTest {
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
 
 	@BeforeClass 
-	static public void setUpClass() throws MapeoException {
+	static public void setUpClass() throws MapeoException, Exception {
 		Mapeador.mapearXml(archivoMapeoPruebaDAO);
 		NavajaConector.getInstance().setMapeoRaiz(Mapeador.getRaizMapeo());
 		
@@ -268,18 +267,14 @@ public class NavajaDAOTest {
 	}
 
 	//METODO UTILITARIO
-	private static DataSource proveerDataSource() {
+	private static DataSource proveerDataSource() throws Exception {
         DataSource dataSource = null;
         Properties propertiesBDD = new Properties();
-        try {
-            propertiesBDD.load(new FileInputStream(archivoMapeoPropertiesDAO));
+        
+        propertiesBDD.load(new FileInputStream(archivoMapeoPropertiesDAO));
 
-            dataSource = BasicDataSourceFactory.createDataSource(propertiesBDD);
-        } catch (IOException ex) {
-            System.out.println("Error al cargar archivo: " + ex);
-        } catch (Exception ex) {
-            System.out.println("Error inesperado: " + ex);
-        }
-            return dataSource;
+        dataSource = BasicDataSourceFactory.createDataSource(propertiesBDD);
+
+        return dataSource;
 	}
 }
