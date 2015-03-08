@@ -29,10 +29,16 @@ public class NavajaDAOTest {
 	
 	private static String INSERT_VALOR_VARCHAR= "insertTest";	
 	private static String INSERT_VALOR_VARCHAR_TEST_BORRARME= "insertPk";
+	private static String INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION= "pkInvalida";
 	private static int INSERT_VALOR_INT_TEST_BORRARME= 111;
+	private static int INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION= 222;	
 	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
 	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE = "delete from mock_tabla_prueba_dao" 
-			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME;	
+			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME;
+	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_BORRARME_PK_INVALIDA_EXCEPTION = "delete from mock_tabla_prueba_dao" 
+			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION;		
+	
 	private static String QUERY_COMPROBACION_INSERT_VALOR_VARCHAR = "select * from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";	
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
@@ -49,7 +55,8 @@ public class NavajaDAOTest {
 	static public void tearDownClass() throws SQLException, CerrarRecursoException {
 		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);
 		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE);
-				
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_BORRARME_PK_INVALIDA_EXCEPTION);				
+		
 		Mapeador.limpiarMapeo();
 		NavajaConector.getInstance().setMapeoRaiz(null);
 	}
@@ -128,6 +135,47 @@ public class NavajaDAOTest {
 		}
 	}
 
+	@Test (expected = PkInvalidaException.class)
+	public void borrarmeTestCasoPkInvalidaException(){
+		try {
+		String insert = "INSERT INTO mock_tabla_prueba_dao (atributo_varchar, atributo_int) VALUES ('"
+				+ INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION + "', " + INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION +")";
+		
+		NavajaConector.ejecutarUpdate(insert);
+		String consulta = "SELECT * FROM mock_tabla_prueba_dao WHERE " 
+				+  "atributo_varchar='"+ INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION + "' AND "
+				+ "atributo_int="+ INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION;
+
+		ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
+		if (rsConsulta.next()){
+			Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals(INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION));
+			Assert.assertTrue(rsConsulta.getInt("atributo_int") == INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION);
+		} else {
+			fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
+		}
+		
+		MockClase mockAborrar = new MockClase(null, null, null, null, null);
+
+		mockAborrar.borrarme();
+		
+		rsConsulta = NavajaConector.ejecutarQuery(consulta);
+		if (rsConsulta.next()){
+			fail("Se encontro registro en la consulta de borrarmeTest despues del borrado");
+		}
+		
+		} catch (MapeoClaseNoExisteException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (SQLException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (BeanException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (CerrarRecursoException e) {
+			fail("Excepcion inesperada " + e);
+		} catch (PkInvalidaException e) {
+			throw e;
+		}
+	}
+	
 	@Test
 	public void isPkValidaCasoReturnTrue(){
 		try {

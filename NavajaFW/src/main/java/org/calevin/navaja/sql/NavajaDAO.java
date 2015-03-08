@@ -120,16 +120,7 @@ public class NavajaDAO {
     	String deleteWherePk = "WHERE ";
         //Se obtiene los campos de la pk de la tabla
         ArrayList<String> camposPk = listaCamposPkParaQuery();     	
-        //TODO revisar si esta comprobacion se puede externalizar en un metodo
-		if(camposPk == null){
-        	throw new PkInvalidaException();
-        } else {
-        	ArrayList<String> camposPkConValorNulo = getCamposPkConValorNulo();
-        	if(camposPkConValorNulo.size() > 0){
-        		throw new PkInvalidaException((String[]) camposPkConValorNulo.toArray());
-        	}
-        }
-
+        if(isPkValida(camposPk)){
     	//El delete tiene la forma:
     	//DELETE FROM nombre_tabla
     	//WHERE columnapk1 = ?,
@@ -164,7 +155,32 @@ public class NavajaDAO {
 
 		NavajaConector.cerrarRecurso(con);
 		NavajaConector.cerrarRecurso(pstm);	    
+        }
     }
+
+    /**
+     * Retorna true si la PK es valida, false en caso de que no lo sea
+     * @param camposPk campos de la PK
+     * @return true si la PK es valida, false si no lo es
+     * @throws BeanException
+     */
+	private boolean isPkValida(ArrayList<String> camposPk) throws BeanException {
+		boolean rta = false;
+		
+		if(camposPk == null){
+        	throw new PkInvalidaException();
+        } else {
+        	ArrayList<String> camposPkConValorNulo = getCamposPkConValorNulo();
+        	if(camposPkConValorNulo.size() > 0){
+
+        		throw new PkInvalidaException(camposPkConValorNulo.toArray(new String[camposPkConValorNulo.size()]));
+        	} else {
+        		rta = true;
+        	}
+        }
+		
+		return rta;
+	}
     
     /**
      * Retorna si la PK de la instancia es valida, falsa o nula. 

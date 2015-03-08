@@ -19,7 +19,7 @@ public class PkInvalidaException extends RuntimeException{
     public PkInvalidaException(String... campos){
     	super(PK_INVALIDA
     			+ NavajaConstantes.COMA_ESPACIO
-    			+ getCamposNulosMensaje());    			
+    			+ getCamposNulosMensaje(campos));    			
     }
     
     private static String getCamposNulosMensaje(String... campos){
@@ -29,7 +29,9 @@ public class PkInvalidaException extends RuntimeException{
     			camposParaMensaje += NavajaConstantes.COMA_ESPACIO;
     		}
     		camposParaMensaje += NavajaConstantes.CAMPO;
+    		camposParaMensaje += NavajaConstantes.ESPACIO_COMILLA;
     		camposParaMensaje += campos[i];
+    		camposParaMensaje += NavajaConstantes.COMILLA_ESPACIO;
     		camposParaMensaje += NavajaConstantes.ES;
     		camposParaMensaje += NavajaConstantes.ESPACIO;
     		camposParaMensaje += NavajaConstantes.NULO;
