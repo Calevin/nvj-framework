@@ -70,6 +70,8 @@ public class Mapeador {
 
 				} catch (ParserConfigurationException e) {
 					throw new MapeoException(e);
+				} catch (MapeoCampoRepetidoException | MapeoTablaRepetidaException | MapeoClaseRepetidaException e) {
+					throw e;
 				} catch (SAXException e) {
 					throw new MapeoException(e);
 				} catch (IOException e) {
