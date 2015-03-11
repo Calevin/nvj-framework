@@ -27,19 +27,21 @@ import org.junit.Test;
 @SuppressWarnings("deprecation")
 public class NavajaDAOTest {
 	
-	private static String INSERT_VALOR_VARCHAR= "insertTest";	
-	private static String INSERT_VALOR_VARCHAR_TEST_BORRARME= "insertPk";
-	private static String INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION= "pkInvalida";
-	private static int INSERT_VALOR_INT_TEST_BORRARME= 111;
-	private static int INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION= 222;	
-	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR = "delete from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";
-	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE = "delete from mock_tabla_prueba_dao" 
-			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME;
+	private static String MOCK_TABLA = "mock_tabla_prueba_dao";
+
+	private static String VARCHAR_INSERT_OK = "insertTest";	
+	private static String VARCHAR_BORRARME_OK= "borrarmeOk";
+	private static String VARCHAR_UPDATE_OK= "updateOk";	
 	
-	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_BORRARME_PK_INVALIDA_EXCEPTION = "delete from mock_tabla_prueba_dao" 
-			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION;		
-	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_ACTUALIZAME_CASO_CORRECTO = "delete from mock_tabla_prueba_dao where atributo_varchar = 'update' AND atributo_int = 1";	
-	private static String QUERY_COMPROBACION_INSERT_VALOR_VARCHAR = "select * from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_INSERT_CASO_OK = "delete from "+ MOCK_TABLA +" where " 
+			+ "atributo_varchar = '" + VARCHAR_INSERT_OK +"' AND atributo_int = 1";
+	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_BORRARME_OK = "delete from " + MOCK_TABLA + " where "
+			+ "atributo_varchar = '" + VARCHAR_BORRARME_OK +"' AND atributo_int = 2";
+	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_ACTUALIZAME_OK = "delete from " + MOCK_TABLA + " where " 
+			+ "atributo_varchar = '" + VARCHAR_UPDATE_OK + "' AND atributo_int = 3";	
+	
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
 
@@ -53,44 +55,26 @@ public class NavajaDAOTest {
 
 	@AfterClass
 	static public void tearDownClass() throws SQLException, CerrarRecursoException {
-		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);
-		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE);
-		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_BORRARME_PK_INVALIDA_EXCEPTION);				
-		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_ACTUALIZAME_CASO_CORRECTO);
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_INSERT_CASO_OK);
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_BORRARME_OK);
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_ACTUALIZAME_OK);
 		
 		Mapeador.limpiarMapeo();
 		NavajaConector.getInstance().setMapeoRaiz(null);
 	}
 
-	//TODO agregar casos negativos/comprobar excepciones
 	@Test
 	public void insertarmeTestCasoCorrecto(){
 		try {
-			MockClase mockAinsertar = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
+			MockClase mockAinsertar = new MockClase(VARCHAR_INSERT_OK, 1, 2, 3, 4);
 
 			mockAinsertar.insertarme();
-
-			ResultSet resultComprobacion = NavajaConector.ejecutarQuery(QUERY_COMPROBACION_INSERT_VALOR_VARCHAR);
-			if(resultComprobacion.next()){
-				MockClase mockParaComprobacion = new MockClase(INSERT_VALOR_VARCHAR, 1, 2, 3, 4);
-				mockParaComprobacion.setAtributoString(resultComprobacion.getString("atributo_varchar"));
-				mockParaComprobacion.setAtributoInteger(resultComprobacion.getInt("atributo_int"));  
-				mockParaComprobacion.setSegundoAtributoInteger(resultComprobacion.getInt("segundo_atributo_int")); 
-				mockParaComprobacion.setTercerAtributoInteger(resultComprobacion.getInt("tercer_atributo_int")); 
-				mockParaComprobacion.setCuartoAtributoInteger(resultComprobacion.getInt("cuarto_atributo_int")); 
-				
-				Assert.assertTrue(mockAinsertar.equals(mockParaComprobacion));
-				} else {
-				fail("No se encontraron registros para comprobar el insert");
+			
+			if(!existeMockEnLaBase(mockAinsertar)){
+				fail("No se encontro el registro insertado");
 			}
 
-		} catch (MapeoClaseNoExisteException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (SQLException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (BeanException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (CerrarRecursoException e) {
+		} catch (MapeoClaseNoExisteException | SQLException | BeanException | CerrarRecursoException e) {
 			fail("Excepcion inesperada " + e);
 		}
 	}
@@ -98,40 +82,21 @@ public class NavajaDAOTest {
 	@Test
 	public void borrarmeTestCasoCorrecto(){
 		try {
-		String insert = "INSERT INTO mock_tabla_prueba_dao (atributo_varchar, atributo_int) VALUES ('"
-				+ INSERT_VALOR_VARCHAR_TEST_BORRARME + "', " + INSERT_VALOR_INT_TEST_BORRARME +")";
+		MockClase mockAborrar = new MockClase(VARCHAR_BORRARME_OK, 2, null, null, null);
 		
-		NavajaConector.ejecutarUpdate(insert);
-		String consulta = "SELECT * FROM mock_tabla_prueba_dao WHERE " 
-				+  "atributo_varchar='"+ INSERT_VALOR_VARCHAR_TEST_BORRARME + "' AND "
-				+ "atributo_int="+ INSERT_VALOR_INT_TEST_BORRARME;
-
-		ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
-		if (rsConsulta.next()){
-			Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals(INSERT_VALOR_VARCHAR_TEST_BORRARME));
-			Assert.assertTrue(rsConsulta.getInt("atributo_int") == INSERT_VALOR_INT_TEST_BORRARME);
-		} else {
-			fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
+		insertarMock(mockAborrar);
+		
+		if(!existeMockEnLaBase(mockAborrar)){
+			fail("No se encontro el registro esperado");
 		}
-		
-		MockClase mockAborrar = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, INSERT_VALOR_INT_TEST_BORRARME, null, null, null);
 
 		mockAborrar.borrarme();
 		
-		rsConsulta = NavajaConector.ejecutarQuery(consulta);
-		if (rsConsulta.next()){
-			fail("Se encontro registro en la consulta de borrarmeTest despues del borrado");
+		if(existeMockEnLaBase(mockAborrar)){
+			fail("Se encontro el registro esperado que deberia haber sido borrado");
 		}
 		
-		} catch (MapeoClaseNoExisteException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (SQLException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (BeanException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (CerrarRecursoException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (PkInvalidaException e) {
+		} catch (MapeoClaseNoExisteException | SQLException | BeanException | CerrarRecursoException | PkInvalidaException e) {
 			fail("Excepcion inesperada " + e);
 		}
 	}
@@ -139,38 +104,12 @@ public class NavajaDAOTest {
 	@Test (expected = PkInvalidaException.class)
 	public void borrarmeTestCasoPkInvalidaException(){
 		try {
-		String insert = "INSERT INTO mock_tabla_prueba_dao (atributo_varchar, atributo_int) VALUES ('"
-				+ INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION + "', " + INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION +")";
-		
-		NavajaConector.ejecutarUpdate(insert);
-		String consulta = "SELECT * FROM mock_tabla_prueba_dao WHERE " 
-				+  "atributo_varchar='"+ INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION + "' AND "
-				+ "atributo_int="+ INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION;
 
-		ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
-		if (rsConsulta.next()){
-			Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals(INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION));
-			Assert.assertTrue(rsConsulta.getInt("atributo_int") == INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION);
-		} else {
-			fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
-		}
-		
-		MockClase mockAborrar = new MockClase(null, null, null, null, null);
+		MockClase mockAborrarConPkInvalida = new MockClase(null, null, null, null, null);
 
-		mockAborrar.borrarme();
-		
-		rsConsulta = NavajaConector.ejecutarQuery(consulta);
-		if (rsConsulta.next()){
-			fail("Se encontro registro en la consulta de borrarmeTest despues del borrado");
-		}
-		
-		} catch (MapeoClaseNoExisteException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (SQLException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (BeanException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (CerrarRecursoException e) {
+		mockAborrarConPkInvalida.borrarme();
+
+		} catch (MapeoClaseNoExisteException | SQLException | BeanException | CerrarRecursoException e) {
 			fail("Excepcion inesperada " + e);
 		} catch (PkInvalidaException e) {
 			throw e;
@@ -178,59 +117,37 @@ public class NavajaDAOTest {
 	}
 	
 	@Test
-	public void actualizame(){
-		MockClase mockAactualizar;
+	public void actualizameTestCasoCorrecto(){
 		try {
-			String insert = "INSERT INTO mock_tabla_prueba_dao (atributo_varchar, atributo_int, segundo_atributo_int, tercer_atributo_int, cuarto_atributo_int)"
-					+ "VALUES ('update', 1, 12, 13, 14)";
-
-			NavajaConector.ejecutarUpdate(insert);
-
-			String consulta = "SELECT * FROM mock_tabla_prueba_dao WHERE " 
-					+  "atributo_varchar='update' AND "
-					+ "atributo_int=1";
-
-			ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
-			if (rsConsulta.next()){
-				Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals("update"));
-				Assert.assertTrue(rsConsulta.getInt("atributo_int") == 1);
-				Assert.assertTrue(rsConsulta.getInt("segundo_atributo_int") == 12);
-				Assert.assertTrue(rsConsulta.getInt("tercer_atributo_int") == 13);
-				Assert.assertTrue(rsConsulta.getInt("cuarto_atributo_int") == 14);				
-			} else {
-				fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
+			MockClase mockUpdate = new MockClase(VARCHAR_UPDATE_OK, 3, 12, 13, 14);
+			
+			insertarMock(mockUpdate);
+			
+			if(!existeMockEnLaBase(mockUpdate)){
+				fail("No se encontro registro esperado");
 			}
-			
-			mockAactualizar = new MockClase("update", 1, 222, 333, 444);
 
-			mockAactualizar.actualizame();
+			mockUpdate.setSegundoAtributoInteger(222);
+			mockUpdate.setTercerAtributoInteger(333);
+			mockUpdate.setCuartoAtributoInteger(444);
 			
-			rsConsulta.close();
+			mockUpdate.actualizame();
 
-			rsConsulta = NavajaConector.ejecutarQuery(consulta);
-			if (rsConsulta.next()){
-				Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals("update"));
-				Assert.assertTrue(rsConsulta.getInt("atributo_int") == 1);
-				Assert.assertTrue(rsConsulta.getInt("segundo_atributo_int") == 222);
-				Assert.assertTrue(rsConsulta.getInt("tercer_atributo_int") == 333);
-				Assert.assertTrue(rsConsulta.getInt("cuarto_atributo_int") == 444);				
-			} else {
-				fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
-			}
-			
+			if(!existeMockEnLaBase(new MockClase(VARCHAR_UPDATE_OK, 3, 222, 333, 444))){
+				fail("No se encontro registro esperado");
+			}			
+
 		} catch (MapeoClaseNoExisteException | BeanException | SQLException | CerrarRecursoException e) {
 			fail("Excepcion inesperada " + e);
 		}		
 	}
-	
+
 	@Test
 	public void isPkValidaCasoReturnTrue(){
 		try {
-			MockClase mockConPkValida = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, INSERT_VALOR_INT_TEST_BORRARME, 1, 2, 3);
+			MockClase mockConPkValida = new MockClase("varcharPK", 0, null, null, null);
 			Assert.assertTrue(mockConPkValida.isPkValida());
-		} catch (MapeoClaseNoExisteException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (BeanException e) {
+		} catch (MapeoClaseNoExisteException | BeanException e) {
 			fail("Excepcion inesperada " + e);
 		}
 	}
@@ -238,20 +155,18 @@ public class NavajaDAOTest {
 	@Test
 	public void isPkValidaCasoReturnFalse(){
 		try {
-			MockClase mockConPkValida = new MockClase(null, INSERT_VALOR_INT_TEST_BORRARME, 1, 2, 3);
-			Assert.assertFalse(mockConPkValida.isPkValida());
-			mockConPkValida = new MockClase(INSERT_VALOR_VARCHAR_TEST_BORRARME, null, 1, 2, 3);
-			Assert.assertFalse(mockConPkValida.isPkValida());
+			MockClase mockConPkInvalida = new MockClase(null, 0, null, null, null);
+			Assert.assertFalse(mockConPkInvalida.isPkValida());
+			mockConPkInvalida = new MockClase("varcharPK", null, null, null, null);
+			Assert.assertFalse(mockConPkInvalida.isPkValida());
 
-		} catch (MapeoClaseNoExisteException e) {
-			fail("Excepcion inesperada " + e);
-		} catch (BeanException e) {
+		} catch (MapeoClaseNoExisteException | BeanException e) {
 			fail("Excepcion inesperada " + e);
 		}
 	}
 	
 	//inner class para test
-	public class MockClase  extends NavajaDAO implements NavajaBean {
+	public  static class MockClase  extends NavajaDAO implements NavajaBean {
 		private String atributoString;
 		private Integer atributoInteger;
 		private Integer segundoAtributoInteger;
@@ -314,17 +229,40 @@ public class NavajaDAOTest {
 		}
 
 		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime
+					* result
+					+ ((atributoInteger == null) ? 0 : atributoInteger
+							.hashCode());
+			result = prime
+					* result
+					+ ((atributoString == null) ? 0 : atributoString.hashCode());
+			result = prime
+					* result
+					+ ((cuartoAtributoInteger == null) ? 0
+							: cuartoAtributoInteger.hashCode());
+			result = prime
+					* result
+					+ ((segundoAtributoInteger == null) ? 0
+							: segundoAtributoInteger.hashCode());
+			result = prime
+					* result
+					+ ((tercerAtributoInteger == null) ? 0
+							: tercerAtributoInteger.hashCode());
+			return result;
+		}
+
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
-			//TablaMapeo puede no estar instanciado y por lo tanto no seran iguales
 			if (!super.equals(obj))
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
 			MockClase other = (MockClase) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
 			if (atributoInteger == null) {
 				if (other.atributoInteger != null)
 					return false;
@@ -356,12 +294,14 @@ public class NavajaDAOTest {
 			return true;
 		}
 
-		private NavajaDAOTest getOuterType() {
-			return NavajaDAOTest.this;
-		}
 	}
 
-	//METODO UTILITARIO
+	//METODOS UTILITARIOS
+	/**
+	 * Provee el datasource para conectarse a la base de testeo
+	 * @return datasource para conectarse a la base de testeo
+	 * @throws Exception
+	 */
 	private static DataSource proveerDataSource() throws Exception {
         DataSource dataSource = null;
         Properties propertiesBDD = new Properties();
@@ -372,4 +312,70 @@ public class NavajaDAOTest {
 
         return dataSource;
 	}
+	
+	/**
+	 * Inserta en la base de datos el mock enviado por parametros
+	 * @param mock a insertar en la base
+	 * @throws SQLException
+	 * @throws CerrarRecursoException
+	 */
+	private static void insertarMock(MockClase mock) throws SQLException, CerrarRecursoException{
+		
+		String insert = "INSERT INTO " + MOCK_TABLA;
+		String insertCampos = " (atributo_varchar, atributo_int";
+		String insertValores = "VALUES ('" 
+				+ mock.getAtributoString() + "', "
+				+ mock.getAtributoInteger();
+
+		if (mock.getSegundoAtributoInteger() != null){
+			insertCampos += ", segundo_atributo_int";
+			insertValores += ", " + mock.getSegundoAtributoInteger();
+		}
+		
+		if(mock.getTercerAtributoInteger() != null){
+			insertCampos += ", tercer_atributo_int";
+			insertValores += ", " + mock.getTercerAtributoInteger();
+		}
+		
+		if(mock.getCuartoAtributoInteger() != null){
+			insertCampos += ", cuarto_atributo_int";
+			insertValores += ", " + mock.getCuartoAtributoInteger();
+		}
+
+		insert += insertCampos + ") ";
+		insert += insertValores + ") ";
+		
+		NavajaConector.ejecutarUpdate(insert);		
+	}
+	
+	/**
+	 * Comprueba que este mock esta en la base de datos
+	 * @param mock registro a comprobrar en la base
+	 * @return true en caso de que ese mock este en la base de datos, false en caso contrario
+	 * @throws CerrarRecursoException 
+	 * @throws SQLException 
+	 * @throws MapeoClaseNoExisteException 
+	 */
+	private static boolean existeMockEnLaBase(MockClase mock) throws SQLException, CerrarRecursoException, MapeoClaseNoExisteException {
+
+		String consulta = "SELECT * FROM " + MOCK_TABLA + " WHERE " 
+				+ "atributo_varchar='" + mock.getAtributoString() + "' "
+				+ "AND atributo_int=" + mock.getAtributoInteger();
+
+		ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
+		
+		MockClase mockResultaQuery = new MockClase();
+		
+		if (rsConsulta.next()){
+			mockResultaQuery.setAtributoString((String) rsConsulta.getObject("atributo_varchar"));
+			mockResultaQuery.setAtributoInteger((Integer) rsConsulta.getObject("atributo_int"));
+			mockResultaQuery.setSegundoAtributoInteger((Integer) rsConsulta.getObject("segundo_atributo_int"));
+			mockResultaQuery.setTercerAtributoInteger((Integer) rsConsulta.getObject("tercer_atributo_int"));
+			mockResultaQuery.setCuartoAtributoInteger((Integer) rsConsulta.getObject("cuarto_atributo_int"));			
+		}
+
+		NavajaConector.cerrarRecurso(rsConsulta);
+		
+		return mock.equals(mockResultaQuery);
+	}	
 }
