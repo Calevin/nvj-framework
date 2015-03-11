@@ -38,7 +38,7 @@ public class NavajaDAOTest {
 	
 	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_BORRARME_PK_INVALIDA_EXCEPTION = "delete from mock_tabla_prueba_dao" 
 			+ " where atributo_varchar = '" + INSERT_VALOR_VARCHAR_TEST_BORRARME_PK_INVALIDA_EXCEPTION +"' AND atributo_int = " + INSERT_VALOR_INT_TEST_BORRARME_PK_INVALIDA_EXCEPTION;		
-	
+	private static String QUERY_LIMPIAR_MOCK_TABLA_TEST_ACTUALIZAME_CASO_CORRECTO = "delete from mock_tabla_prueba_dao where atributo_varchar = 'update' AND atributo_int = 1";	
 	private static String QUERY_COMPROBACION_INSERT_VALOR_VARCHAR = "select * from mock_tabla_prueba_dao where atributo_varchar = '" + INSERT_VALOR_VARCHAR +"'";	
 	private static String archivoMapeoPruebaDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao_or.xml";
 	private static String archivoMapeoPropertiesDAO = ConstantesParaTests.CARPETA_ARCHIVOS_TEST + "pruebadao/prueba_dao.properties";	
@@ -56,6 +56,7 @@ public class NavajaDAOTest {
 		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_INSERT_VALOR_VARCHAR);
 		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_DELETE);
 		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_BORRARME_PK_INVALIDA_EXCEPTION);				
+		NavajaConector.ejecutarUpdate(QUERY_LIMPIAR_MOCK_TABLA_TEST_ACTUALIZAME_CASO_CORRECTO);
 		
 		Mapeador.limpiarMapeo();
 		NavajaConector.getInstance().setMapeoRaiz(null);
@@ -174,6 +175,52 @@ public class NavajaDAOTest {
 		} catch (PkInvalidaException e) {
 			throw e;
 		}
+	}
+	
+	@Test
+	public void actualizame(){
+		MockClase mockAactualizar;
+		try {
+			String insert = "INSERT INTO mock_tabla_prueba_dao (atributo_varchar, atributo_int, segundo_atributo_int, tercer_atributo_int, cuarto_atributo_int)"
+					+ "VALUES ('update', 1, 12, 13, 14)";
+
+			NavajaConector.ejecutarUpdate(insert);
+
+			String consulta = "SELECT * FROM mock_tabla_prueba_dao WHERE " 
+					+  "atributo_varchar='update' AND "
+					+ "atributo_int=1";
+
+			ResultSet rsConsulta = NavajaConector.ejecutarQuery(consulta);
+			if (rsConsulta.next()){
+				Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals("update"));
+				Assert.assertTrue(rsConsulta.getInt("atributo_int") == 1);
+				Assert.assertTrue(rsConsulta.getInt("segundo_atributo_int") == 12);
+				Assert.assertTrue(rsConsulta.getInt("tercer_atributo_int") == 13);
+				Assert.assertTrue(rsConsulta.getInt("cuarto_atributo_int") == 14);				
+			} else {
+				fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
+			}
+			
+			mockAactualizar = new MockClase("update", 1, 222, 333, 444);
+
+			mockAactualizar.actualizame();
+			
+			rsConsulta.close();
+
+			rsConsulta = NavajaConector.ejecutarQuery(consulta);
+			if (rsConsulta.next()){
+				Assert.assertTrue(rsConsulta.getString("atributo_varchar").equals("update"));
+				Assert.assertTrue(rsConsulta.getInt("atributo_int") == 1);
+				Assert.assertTrue(rsConsulta.getInt("segundo_atributo_int") == 222);
+				Assert.assertTrue(rsConsulta.getInt("tercer_atributo_int") == 333);
+				Assert.assertTrue(rsConsulta.getInt("cuarto_atributo_int") == 444);				
+			} else {
+				fail("No se encontro registro en la consulta de borrarmeTest antes del borrado");
+			}
+			
+		} catch (MapeoClaseNoExisteException | BeanException | SQLException | CerrarRecursoException e) {
+			fail("Excepcion inesperada " + e);
+		}		
 	}
 	
 	@Test

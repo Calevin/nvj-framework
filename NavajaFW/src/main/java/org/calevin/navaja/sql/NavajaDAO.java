@@ -124,7 +124,7 @@ public class NavajaDAO {
     	//El delete tiene la forma:
     	//DELETE FROM nombre_tabla
     	//WHERE columnapk1 = ?,
-    	//columnapk1 = ?
+    	//columnapk2 = ?
     	//...
         for (int i = 0; i < cantidadCamposPk; i++) {
         	//Despues del primer item se ingresa una coma antes de cada nuevo item
@@ -158,6 +158,99 @@ public class NavajaDAO {
         }
     }
 
+    /**
+     * Actualiza el registro en la base de datos con la pk de la instancia utilizando sus valores actuales.
+     * @throws BeanException
+     * @throws SQLException
+     * @throws CerrarRecursoException
+     */
+    public void actualizame() throws BeanException, SQLException, CerrarRecursoException{
+        
+        Connection con = null;
+        PreparedStatement pstm = null;
+        String update ="";
+        
+        String tablaNombre = tablaMapeo.getNombre();
+    	String updateTabla = "UPDATE " + tablaNombre + " ";
+    	String updateSetColumnas= "";
+    	String updateWherePk = "";
+    	
+    	//Se obtiene los campos de la pk de la tabla
+        ArrayList<String> camposPk = listaCamposPkParaQuery();
+
+        if(isPkValida(camposPk)){
+        
+    	//El UPDATE tiene la forma
+    	//UPDATE table_name
+    	//SET column1=?,column2=?,...
+        //WHERE columnPk1=?,columnpk2=?,...
+
+        ArrayList<String> campos = listaCamposParaQuery();         	
+        int cantidadCampos = tablaMapeo.getCampos().size();
+        
+        updateSetColumnas= "SET ";
+        //Se forma la parte "SET column1=?,column2=?,..."
+		for (int i = 0; i < cantidadCampos; i++) {
+			//Despues del primer item se ingresa una coma antes de cada nuevo item
+			if (i != 0){
+				updateSetColumnas += ", ";
+			}
+			
+			updateSetColumnas += campos.get(i);
+			updateSetColumnas += "=?";
+		}
+
+        int cantidadCamposPk = tablaMapeo.getPrimaryKeyMapeo().getCampos().size();
+        
+        updateWherePk = " WHERE ";
+        //Se forma la parte "WHERE columnPk1=?,columnpk2=?,..."
+        for (int i = 0; i < cantidadCamposPk; i++) {
+        	//Despues del primer item se ingresa una coma antes de cada nuevo item
+            if (i != 0){
+            	updateWherePk += " AND ";
+            }
+            updateWherePk  += camposPk.get(i) + " = ?";
+        }
+        
+        //Se completa la query
+		update = updateTabla + updateSetColumnas + updateWherePk;
+
+		con = NavajaConector.getInstance().getDataSource().getConnection();
+	    pstm = con.prepareStatement(update);
+	    //Se setean los parametros obtienendo los atributos de la instancia
+
+	    //VALORES DEL SET
+	    int indiceDelParametro = 1;
+	    for (int i = 0; i < cantidadCampos; i++) {
+	    	//a partir del campo se obtiene el valor de dicho atributo
+	    	String campo = campos.get(i);
+	    	String atributo = tablaMapeo.getCampoMapeoPorNombre(campo).getNombreComoAtributo();
+
+	    	pstm.setObject(indiceDelParametro, UtilitarioBean.invocarGetter(this, atributo));	
+	    	indiceDelParametro++;
+	    }	    
+
+	    //VALORES DEL WHERE
+	    for (int i = 0; i < cantidadCamposPk; i++) {
+	    	//a partir del campo se obtiene el valor de dicho atributo
+	    	String campoPk = camposPk.get(i);
+	    	String atributo = tablaMapeo.getCampoMapeoPorNombre(campoPk).getNombreComoAtributo();
+
+	    	pstm.setObject(indiceDelParametro, UtilitarioBean.invocarGetter(this, atributo));	
+	    	indiceDelParametro++;
+	    }
+	    
+        System.out.println("\nUpdate: " + update + " ");
+
+        System.out.println("Se ejecutara: " + pstm.toString());
+
+		System.out.println("Cambios por la ejecucion: " + pstm.executeUpdate());
+
+		NavajaConector.cerrarRecurso(con);
+		NavajaConector.cerrarRecurso(pstm);
+        }//TODO agregar un else que logee que no se produjo el delete?
+    }
+    
     /**
      * Retorna true si la PK es valida, false en caso de que no lo sea
      * @param camposPk campos de la PK
