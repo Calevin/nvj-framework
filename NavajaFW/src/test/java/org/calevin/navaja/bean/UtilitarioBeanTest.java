@@ -51,22 +51,8 @@ public class UtilitarioBeanTest {
 	}
 
 	@Test (expected=BeanInvocarGetterException.class)
-	public void invocarGetterCasoInstanciaNulaTest() throws Exception {
-		UtilitarioBean.invocarGetter(null, atributoStringNombre);			
-	}	
-
-	@Test (expected=BeanInvocarGetterException.class)
-	public void invocarGetterCasoAtributoNuloTest() throws Exception {	
-		UtilitarioBean.invocarGetter(mockClase, null);
-	}
-
-	@Test
-	public void invocarGetterCasoAtributoInexistenteTest() {
-		try {
+	public void invocarGetterCasoAtributoInexistenteTest() throws Exception {
 			Assert.assertNull(UtilitarioBean.invocarGetter(mockClase, atributoInexistente));
-		} catch (BeanException e) {
-			fail("Exception! " + e);
-		}
 	}
 	
 	//TESTS PARA invocarSetter
@@ -105,25 +91,12 @@ public class UtilitarioBeanTest {
 			fail("Exception! " + e);
 		}
 	}
-	
+
 	@Test (expected=BeanInvocarSetterException.class)
-	public void invocarSetterCasoInstanciaNulaTest() throws Exception {		
-		UtilitarioBean.invocarSetter(null, atributoStringNombre, atributoStringValorAlternativo);			
-	}		
+	public void invocarSetterCasoAtributoInexistenteTest() throws Exception {
 
-	@Test (expected=BeanInvocarSetterException.class) 
-	public void invocarSetterCasoAtributoNuloTest() throws Exception{	
-		UtilitarioBean.invocarSetter(mockClase, null, atributoStringValorAlternativo);
-	}
+		UtilitarioBean.invocarSetter(mockClase, atributoInexistente, atributoStringValorAlternativo);
 
-	@Test
-	public void invocarSetterCasoAtributoInexistenteTest() {
-		try {
-			UtilitarioBean.invocarSetter(mockClase, atributoInexistente, atributoStringValorAlternativo);
-		} catch (BeanException e) {
-			fail("Exception! " + e);
-		}
-		
 		Assert.assertTrue(atributoStringValor.equals(mockClase.getAtributoString()));
 		Assert.assertTrue(atributoIntegerValor.equals(mockClase.getAtributoInteger()));	
 	}

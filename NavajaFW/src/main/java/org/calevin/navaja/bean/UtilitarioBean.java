@@ -19,43 +19,41 @@ public class UtilitarioBean {
      * @throws BeanException 
      */
     public static Object invocarGetter(Object instancia, String atributo) throws BeanException {
-    	
-    	if (atributo == null){
-            throw new BeanInvocarGetterException(
-            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ATRIBUTO_NULO, 0));
-    	} 
+    	boolean getterExiste = false;
 
-    	if (instancia == null){
-            throw new BeanInvocarGetterException(
-            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.INSTANCIA_NULA, 0));
-    	} 
-    	
         //Method metodo;
         Method metodos[];
         Class<?> clase = null;
         Object rta = null;
         String nombreMetodo = null;
+        //Se pone el nombre atributo en mayuscula como estaria en su metodo get
+        String nombreAtributo = NavajaStringUtil.conmutarCaseChar(atributo, 0);
+        
         try {
             //Se toma la clase del objeto recibido
             clase = Class.forName(instancia.getClass().getName());
 
             //Se toman los metodos de la clase del objeto recibido
             metodos = clase.getMethods();
-
+            
             for (Method metodo : metodos) {
             	nombreMetodo = metodo.getName();
                 //Si el nombre del metodo termina con el nombre de atributo y empieza con get
-            	String nombreAtributo = NavajaStringUtil.conmutarCaseChar(atributo, 0);
             	if (nombreAtributo.equals(nombreMetodo.substring(3))
             			&& (nombreMetodo.startsWith(NavajaConstantes.GET))) {
                     //Se invoca a dicho getter y se guarda el resultado retornado
                     rta = metodo.invoke(instancia);
+                    getterExiste = true;
                 }
 			}
         } catch (Exception e) {
             throw new BeanInvocarGetterException(atributo, e);
         }
 
+        if(getterExiste == false){
+        	throw new BeanInvocarGetterException("Metodo "+ NavajaConstantes.GET + nombreAtributo + " no existe.");
+        }
+        
         return rta;
     }
     
@@ -69,20 +67,13 @@ public class UtilitarioBean {
      * @param valor Valor que se asignara mediante el setter
      */
     public static void invocarSetter(Object instancia, String atributo, Object valor) throws BeanException {
+    	boolean setterExiste = false;
+    	
         Method metodos[];
         Class<?> clase = null;
         String nombreMetodo = null;
 
-    	if (atributo == null){
-            throw new BeanInvocarSetterException(
-            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.ATRIBUTO_NULO, 0));
-    	} 
-
-    	if (instancia == null){
-            throw new BeanInvocarSetterException(
-            		NavajaStringUtil.conmutarCaseChar(NavajaConstantes.INSTANCIA_NULA, 0));
-    	}
-    	
+        String nombreAtributo = NavajaStringUtil.conmutarCaseChar(atributo, 0);        
         try {
             //Se toma la clase del objeto recibido        	
             clase = Class.forName(instancia.getClass().getName());
@@ -91,14 +82,13 @@ public class UtilitarioBean {
             metodos = clase.getMethods();
 
             //Se recorre los metodos
-            for (Method metodo : metodos) {
-
+            for (int i = 0; i < metodos.length && !setterExiste; i++) {
+            	Method metodo = metodos[i];
                 //Se toma el nombre del metodo
                 nombreMetodo = metodo.getName();
 
                 //Si el final del nombre del metodo termina con el atributo 
                 //enviado y empieza con set es el setter correspondiente
-                String nombreAtributo = NavajaStringUtil.conmutarCaseChar(atributo, 0);
             	if (nombreAtributo.equals(nombreMetodo.substring(3))
             			&& (nombreMetodo.startsWith(NavajaConstantes.SET))) {
                 	//TODO INVOCAR CASTEAR EL VALOR SEGUN LO DEFINIDO
@@ -106,14 +96,17 @@ public class UtilitarioBean {
                     
                     //Se invoca el metodo de ese objeto enviandole el valor
                     metodo.invoke(instancia, valor);
-                    //Si se ejecuto salir
-                    break;                    
+                    setterExiste = true;               
                 }
             }
 
         } catch (Exception e) {
             throw new BeanInvocarSetterException(atributo, valor, e);
         }
+        
+        if(setterExiste == false){
+        	throw new BeanInvocarSetterException("Metodo "+ NavajaConstantes.SET + nombreAtributo + " no existe.");
+        }        
     }
     
     /**

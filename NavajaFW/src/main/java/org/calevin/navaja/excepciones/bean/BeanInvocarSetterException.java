@@ -35,6 +35,7 @@ public class BeanInvocarSetterException extends BeanException {
         		+ NavajaConstantes.ESPACIO            		
         		+ NavajaConstantes.SET
         		+ NavajaStringUtil.conmutarCaseChar(atributo, 0)
+        		+ NavajaConstantes.ESPACIO
         		+ NavajaConstantes.CON
         		+ NavajaConstantes.ESPACIO
         		+ NavajaConstantes.VALOR
@@ -43,6 +44,6 @@ public class BeanInvocarSetterException extends BeanException {
         		+ NavajaConstantes.COMILLA        		
         		+ NavajaConstantes.PUNTO
         		+ NavajaConstantes.ESPACIO        		
-        		+ e); 
+        		, e); 
 	}	
 }

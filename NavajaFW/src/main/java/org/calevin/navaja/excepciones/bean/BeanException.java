@@ -19,4 +19,11 @@ public class BeanException extends Exception {
                 + mensaje);
 	}
 	
+	public BeanException(String mensaje, Exception e) {
+		super(EXCEPCION_AL_USANDO_BEAN 
+				+ NavajaConstantes.PUNTO
+                + NavajaConstantes.ESPACIO 
+                + mensaje
+                , e);
+	}
 }

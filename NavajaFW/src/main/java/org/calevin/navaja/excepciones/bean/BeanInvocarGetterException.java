@@ -37,7 +37,7 @@ public class BeanInvocarGetterException extends BeanException {
         		+ NavajaStringUtil.conmutarCaseChar(atributo, 0)
         		+ NavajaConstantes.PUNTO
         		+ NavajaConstantes.ESPACIO        		
-        		+ e); 
+        		, e); 
 	}
 	
 }
